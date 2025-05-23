@@ -2,17 +2,33 @@ name: Build Windows EXE
 on: 
   push:
     branches: [ main ]
+  workflow_dispatch:
+
 jobs:
   build:
     runs-on: windows-latest
+    
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-python@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v5
       with:
         python-version: '3.11'
-    - run: pip install pyinstaller pandas openpyxl pillow matplotlib xlrd
-    - run: pyinstaller --onefile --windowed --name "Excel_Karsilastirma_CAL" main.py
-    - uses: actions/upload-artifact@v3
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pyinstaller pandas openpyxl pillow matplotlib xlrd
+        
+    - name: Build EXE
+      run: |
+        pyinstaller --onefile --windowed --name "Excel_Karsilastirma_CAL" main.py
+        
+    - name: Upload EXE
+      uses: actions/upload-artifact@v4
       with:
         name: Excel_Karsilastirma_EXE
         path: dist/Excel_Karsilastirma_CAL.exe
+        retention-days: 30
