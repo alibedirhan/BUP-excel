@@ -435,15 +435,51 @@ class ModernExcelComparisonUI:
             "📄"
         )
         
-        # Çıktı dosyası (normal)
-        self.create_file_input(
+        # Çıktı dosyası (sadece gösterim - gözat butonu yok)
+        self.create_display_input(
             content_frame,
             "Sonuç Dosyası",
             self.app_logic.output_path,
-            self.browse_output,
             "💾"
         )
         
+    def create_display_input(self, parent, label_text, text_var, icon):
+        """Sadece gösterim amaçlı dosya input grubu (gözat butonu yok)"""
+        # Ana container
+        container = tk.Frame(parent, bg=self.colors['card'])
+        container.pack(fill=tk.X, pady=(0, 8))
+        
+        # Label
+        label = tk.Label(
+            container,
+            text=f"{icon} {label_text}",
+            font=('Segoe UI', 9, 'bold'),
+            bg=self.colors['card'],
+            fg=self.colors['text']
+        )
+        label.pack(anchor=tk.W, pady=(0, 3))
+        
+        # İpucu metni
+        hint_label = tk.Label(
+            container,
+            text="Depo kartından otomatik olarak oluşturulur",
+            font=('Segoe UI', 8, 'italic'),
+            bg=self.colors['card'],
+            fg=self.colors['text_light']
+        )
+        hint_label.pack(anchor=tk.W, pady=(0, 3))
+        
+        # Sadece Entry (buton yok)
+        entry = ttk.Entry(
+            container,
+            textvariable=text_var,
+            font=('Segoe UI', 10),
+            style='Modern.TEntry',
+            state='readonly'  # Sadece okunabilir
+        )
+        entry.pack(fill=tk.X)
+        
+        return entry
     def create_file_input(self, parent, label_text, text_var, browse_command, icon):
         """Normal dosya seçimi input grubu"""
         # Ana container
@@ -734,49 +770,6 @@ class ModernExcelComparisonUI:
                 self.app_logic.file2_path.set(file_path)
             else:
                 self.show_error("Dosya Seçim Hatası", error_msg)
-            
-    def browse_output(self):
-        """Sonuç dosyasını kaydet"""
-        # Hangi formatların seçili olduğunu kontrol et
-        excel_selected = self.save_excel.get()
-        image_selected = self.save_image.get()
-        
-        if not excel_selected and not image_selected:
-            self.show_warning("Uyarı", "Lütfen en az bir kaydetme formatı seçin!")
-            return
-        
-        if excel_selected and image_selected:
-            # Her iki format da seçili
-            filetypes = [("Tüm Dosyalar", "*.*")]
-            defaultextension = ""
-            title = "Sonuç Dosyalarını Kaydet (uzantı olmadan)"
-        elif excel_selected:
-            # Sadece Excel
-            filetypes = [("Excel Dosyaları", "*.xlsx"), ("Tüm Dosyalar", "*.*")]
-            defaultextension = ".xlsx"
-            title = "Excel Sonuç Dosyasını Kaydet"
-        elif image_selected:
-            # Sadece Resim
-            filetypes = [("PNG Dosyaları", "*.png"), ("Tüm Dosyalar", "*.*")]
-            defaultextension = ".png"
-            title = "Resim Sonuç Dosyasını Kaydet"
-        else:
-            # Hiçbiri seçili değil (bu duruma normalde gelmemeli)
-            filetypes = [("Tüm Dosyalar", "*.*")]
-            defaultextension = ""
-            title = "Sonuç Dosyasını Kaydet"
-            
-        file_path = filedialog.asksaveasfilename(
-            title=title,
-            defaultextension=defaultextension,
-            filetypes=filetypes,
-            initialdir=os.path.expanduser("~")
-        )
-        
-        if file_path:
-            # Uzantıyı kaldır (çünkü program kendi uzantılarını ekleyecek)
-            base_name = os.path.splitext(file_path)[0] 
-            self.app_logic.output_path.set(base_name)
             
     def update_results(self, results, status_text):
         """Sonuçları güncelle - Thread-safe"""
