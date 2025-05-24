@@ -53,11 +53,11 @@ class ModernExcelComparisonUI:
         self.configure_modern_styles(style)
         
     def configure_modern_styles(self, style):
-        """Modern stil konfigürasyonları"""
+        """Modern stil konfigürasyonları - TÜM FONTLAR 8px"""
         # Ana buton stili
         style.configure(
             'Modern.TButton',
-            font=('Segoe UI', 10),
+            font=('Segoe UI', 8),  # 10 → 8
             padding=(20, 12),
             relief='flat',
             borderwidth=0
@@ -66,7 +66,7 @@ class ModernExcelComparisonUI:
         # Vurgulu buton stili
         style.configure(
             'Accent.TButton',
-            font=('Segoe UI', 10, 'bold'),
+            font=('Segoe UI', 8, 'bold'),  # 10 → 8
             padding=(25, 15),
             relief='flat',
             borderwidth=0
@@ -75,10 +75,26 @@ class ModernExcelComparisonUI:
         # İkincil buton stili
         style.configure(
             'Secondary.TButton',
-            font=('Segoe UI', 10),
+            font=('Segoe UI', 8),  # 10 → 8
             padding=(20, 12),
             relief='flat',
             borderwidth=1
+        )
+        
+        # Küçük buton stili (Gözat butonları için)
+        style.configure(
+            'Small.TButton',
+            font=('Segoe UI', 8),
+            padding=(12, 8),
+            relief='flat',
+            borderwidth=1
+        )
+        
+        # Küçük checkbutton stili (Seçenekler için)
+        style.configure(
+            'Small.TCheckbutton',
+            font=('Segoe UI', 8),
+            padding=(0, 3)
         )
         
         # LabelFrame stili
@@ -91,14 +107,14 @@ class ModernExcelComparisonUI:
         
         style.configure(
             'Modern.TLabelframe.Label',
-            font=('Segoe UI', 11, 'bold'),
+            font=('Segoe UI', 8, 'bold'),  # 11 → 8
             padding=(0, 5)
         )
         
         # Entry stili
         style.configure(
             'Modern.TEntry',
-            font=('Segoe UI', 10),
+            font=('Segoe UI', 8),  # 10 → 8
             padding=10,
             relief='flat',
             borderwidth=1
@@ -107,8 +123,8 @@ class ModernExcelComparisonUI:
         # Drag & Drop Entry stili
         style.configure(
             'DragDrop.TEntry',
-            font=('Segoe UI', 10),
-            padding=12,
+            font=('Segoe UI', 8),
+            padding=8,
             relief='solid',
             borderwidth=2
         )
@@ -116,22 +132,23 @@ class ModernExcelComparisonUI:
         # Checkbutton stili
         style.configure(
             'Modern.TCheckbutton',
-            font=('Segoe UI', 10),
+            font=('Segoe UI', 8),  # 10 → 8
             padding=(0, 5)
         )
         
         # Radiobutton stili
         style.configure(
             'Modern.TRadiobutton',
-            font=('Segoe UI', 10),
+            font=('Segoe UI', 8),  # 10 → 8
             padding=(0, 3)
         )
         
     def setup_main_window(self):
-        """Ana pencere ayarları"""
-        self.root.title("CAL Excel Cari Karşılaştırma")
-        self.root.geometry("1000x850")
-        self.root.minsize(950, 800)
+        """Ana pencere ayarları - Özel başlık ile"""
+        # Pencere başlığını CAL olarak ayarla
+        self.root.title("CAL")
+        self.root.geometry("900x650")
+        self.root.minsize(850, 600)
         
         # Pencereyi ortala
         self.center_window()
@@ -144,7 +161,6 @@ class ModernExcelComparisonUI:
         
         # İkon ayarla (varsa)
         try:
-            # İkon dosyası varsa kullan
             self.root.iconbitmap('icon.ico')
         except:
             pass
@@ -173,21 +189,21 @@ class ModernExcelComparisonUI:
         self.root.geometry(f'{width}x{height}+{x}+{y}')
         
     def create_modern_interface(self):
-        """Modern arayüz bileşenlerini oluştur"""
-        # Ana konteyner - padding'i azalt
+        """Modern arayüz bileşenlerini oluştur - Özel başlık ile"""
+        # Ana konteyner
         main_container = tk.Frame(self.root, bg=self.colors['background'])
-        main_container.pack(fill=tk.BOTH, expand=True, padx=15, pady=10)
+        main_container.pack(fill=tk.BOTH, expand=True, padx=10, pady=8)
         
-        # Başlık bölümü
-        self.create_header(main_container)
+        # Özel başlık bölümü oluştur
+        self.create_custom_header(main_container)
         
-        # İçerik container'ı - üst padding'i azalt
+        # İçerik container'ı
         content_frame = tk.Frame(main_container, bg=self.colors['background'])
-        content_frame.pack(fill=tk.BOTH, expand=True, pady=(10, 0))
+        content_frame.pack(fill=tk.BOTH, expand=True, pady=(5, 0))
         
         # Sol panel (Dosya seçimi ve seçenekler)
         left_panel = tk.Frame(content_frame, bg=self.colors['background'])
-        left_panel.pack(side=tk.LEFT, fill=tk.Y, padx=(0, 15))
+        left_panel.pack(side=tk.LEFT, fill=tk.Y, padx=(0, 10))
         
         # Sağ panel (Sonuçlar)
         right_panel = tk.Frame(content_frame, bg=self.colors['background'])
@@ -199,99 +215,91 @@ class ModernExcelComparisonUI:
         # Sağ paneli oluştur
         self.create_right_panel(right_panel)
         
-    def create_header(self, parent):
-        """Başlık bölümünü oluştur"""
-        header_frame = tk.Frame(parent, bg=self.colors['card'], height=80)
-        header_frame.pack(fill=tk.X, pady=(0, 8))
+    def create_custom_header(self, parent):
+        """Özel başlık bölümü oluştur - Sadece Excel Karşılaştırma ortada"""
+        header_frame = tk.Frame(parent, bg=self.colors['card'], height=50, relief='solid', bd=1)
+        header_frame.pack(fill=tk.X, pady=(0, 5))
         header_frame.pack_propagate(False)
         
-        # Başlık metni
-        title_label = tk.Label(
-            header_frame,
-            text="Excel Cari Ünvan Karşılaştırma",
-            font=('Segoe UI', 16, 'bold'),
-            bg=self.colors['card'],
-            fg=self.colors['text'],
-            pady=8
-        )
-        title_label.pack()
+        # Orta - Excel Karşılaştırma (tek başına ortada)
+        center_frame = tk.Frame(header_frame, bg=self.colors['card'])
+        center_frame.pack(expand=True, fill=tk.BOTH)
         
-        # Alt başlık
-        subtitle_label = tk.Label(
-            header_frame,
-            text="İki Excel dosyasındaki cari ünvanları karşılaştırır ve farklılıkları tespit eder.",
-            font=('Segoe UI', 9),
+        title_label = tk.Label(
+            center_frame,
+            text="Excel Karşılaştırma",
+            font=('Segoe UI', 14, 'bold'),  # Font boyutu 12 → 14 (biraz daha büyütüldü)
             bg=self.colors['card'],
-            fg=self.colors['text_light']
+            fg=self.colors['text']
         )
-        subtitle_label.pack()
+        title_label.pack(expand=True)
         
     def create_left_panel(self, parent):
-        """Sol panel (Dosya seçimi ve seçenekler)"""
+        """Sol panel (Dosya seçimi ve seçenekler) - Uniform font"""
         # Sol panel için sabit genişlik ayarla
-        parent.config(width=400)
+        parent.config(width=380)
         parent.pack_propagate(False)
         
         # Dosya seçimi kartı
         self.create_file_selection_card(parent)
         
-        # Boşluk - Minimal
-        tk.Frame(parent, bg=self.colors['background'], height=3).pack()
+        # Minimal boşluk
+        tk.Frame(parent, bg=self.colors['background'], height=2).pack()
         
         # Seçenekler kartı
         self.create_options_card(parent)
         
-        # Boşluk - Minimal
-        tk.Frame(parent, bg=self.colors['background'], height=3).pack()
+        # Minimal boşluk
+        tk.Frame(parent, bg=self.colors['background'], height=2).pack()
         
         # İşlem butonları
         self.create_action_buttons(parent)
         
     def create_dragdrop_file_input(self, parent, label_text, text_var, browse_command, icon):
-        """Drag & Drop destekli dosya input grubu"""
+        """Drag & Drop destekli dosya input grubu - Uniform font"""
         # Ana container
         container = tk.Frame(parent, bg=self.colors['card'])
-        container.pack(fill=tk.X, pady=(0, 8))
+        container.pack(fill=tk.X, pady=(0, 4))
         
-        # Label
+        # Label - uniform font
         label = tk.Label(
             container,
             text=f"{icon} {label_text}",
-            font=('Segoe UI', 9, 'bold'),
+            font=('Segoe UI', 8, 'bold'),  # Uniform font
             bg=self.colors['card'],
             fg=self.colors['text']
         )
-        label.pack(anchor=tk.W, pady=(0, 3))
+        label.pack(anchor=tk.W, pady=(0, 1))
         
-        # İpucu metni
+        # İpucu metni - uniform font
         hint_label = tk.Label(
             container,
-            text="Dosyayı aşağıdaki alana sürükleyip bırakın veya Gözat butonuna tıklayın",
-            font=('Segoe UI', 8, 'italic'),
+            text="Sürükle veya Gözat",
+            font=('Segoe UI', 8, 'italic'),  # Uniform font (7 → 8)
             bg=self.colors['card'],
             fg=self.colors['text_light']
         )
-        hint_label.pack(anchor=tk.W, pady=(0, 3))
+        hint_label.pack(anchor=tk.W, pady=(0, 1))
         
         # Input ve buton frame
         input_frame = tk.Frame(container, bg=self.colors['card'])
         input_frame.pack(fill=tk.X)
         
-        # Entry - Drag & Drop destekli
+        # Entry - uniform font
         entry = ttk.Entry(
             input_frame,
             textvariable=text_var,
-            font=('Segoe UI', 10),
+            font=('Segoe UI', 8),  # Uniform font
             style='DragDrop.TEntry'
         )
-        entry.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(0, 8))
+        entry.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(0, 4))
         
         # Gözat butonu
         browse_btn = ttk.Button(
             input_frame,
             text="Gözat",
             command=browse_command,
-            style='Secondary.TButton'
+            style='Small.TButton'
         )
         browse_btn.pack(side=tk.RIGHT)
         
@@ -398,29 +406,29 @@ class ModernExcelComparisonUI:
             return False
         
     def create_file_selection_card(self, parent):
-        """Dosya seçimi kartı - Drag & Drop destekli"""
+        """Dosya seçimi kartı - Uniform font"""
         card_frame = tk.Frame(parent, bg=self.colors['card'], relief='solid', bd=1)
-        card_frame.pack(fill=tk.X, pady=3)
+        card_frame.pack(fill=tk.X, pady=2)
         
-        # Kart başlığı
+        # Kart başlığı - uniform font
         header = tk.Label(
             card_frame,
             text="📁 Dosya Seçimi",
-            font=('Segoe UI', 10, 'bold'),
+            font=('Segoe UI', 8, 'bold'),  # Uniform font
             bg=self.colors['card'],
             fg=self.colors['text'],
-            pady=6
+            pady=4
         )
-        header.pack(anchor=tk.W, padx=15)
+        header.pack(anchor=tk.W, padx=12)
         
         # Dosya seçimi içeriği
         content_frame = tk.Frame(card_frame, bg=self.colors['card'])
-        content_frame.pack(fill=tk.X, padx=10, pady=(0, 8))
+        content_frame.pack(fill=tk.X, padx=8, pady=(0, 6))
         
         # Eski dosya - Drag & Drop destekli
         self.create_dragdrop_file_input(
             content_frame,
-            "Eski Tarihli Excel Dosyası",
+            "Eski Tarihli Excel",
             self.app_logic.file1_path,
             self.browse_file1,
             "📄"
@@ -429,7 +437,7 @@ class ModernExcelComparisonUI:
         # Yeni dosya - Drag & Drop destekli
         self.create_dragdrop_file_input(
             content_frame,
-            "Yeni Tarihli Excel Dosyası",
+            "Yeni Tarihli Excel",
             self.app_logic.file2_path,
             self.browse_file2,
             "📄"
@@ -444,121 +452,84 @@ class ModernExcelComparisonUI:
         )
         
     def create_display_input(self, parent, label_text, text_var, icon):
-        """Sadece gösterim amaçlı dosya input grubu (gözat butonu yok)"""
+        """Sadece gösterim amaçlı dosya input grubu - Uniform font"""
         # Ana container
         container = tk.Frame(parent, bg=self.colors['card'])
-        container.pack(fill=tk.X, pady=(0, 8))
+        container.pack(fill=tk.X, pady=(0, 4))
         
-        # Label
+        # Label - uniform font
         label = tk.Label(
             container,
             text=f"{icon} {label_text}",
-            font=('Segoe UI', 9, 'bold'),
+            font=('Segoe UI', 8, 'bold'),  # Uniform font
             bg=self.colors['card'],
             fg=self.colors['text']
         )
-        label.pack(anchor=tk.W, pady=(0, 3))
+        label.pack(anchor=tk.W, pady=(0, 1))
         
-        # İpucu metni
+        # İpucu metni - uniform font
         hint_label = tk.Label(
             container,
-            text="Depo kartından otomatik olarak oluşturulur",
-            font=('Segoe UI', 8, 'italic'),
+            text="Otomatik oluşturulur",
+            font=('Segoe UI', 8, 'italic'),  # Uniform font (7 → 8)
             bg=self.colors['card'],
             fg=self.colors['text_light']
         )
-        hint_label.pack(anchor=tk.W, pady=(0, 3))
+        hint_label.pack(anchor=tk.W, pady=(0, 1))
         
-        # Sadece Entry (buton yok)
+        # Sadece Entry - uniform font
         entry = ttk.Entry(
             container,
             textvariable=text_var,
-            font=('Segoe UI', 10),
+            font=('Segoe UI', 8),  # Uniform font
             style='Modern.TEntry',
-            state='readonly'  # Sadece okunabilir
+            state='readonly'
         )
         entry.pack(fill=tk.X)
         
         return entry
-    def create_file_input(self, parent, label_text, text_var, browse_command, icon):
-        """Normal dosya seçimi input grubu"""
-        # Ana container
-        container = tk.Frame(parent, bg=self.colors['card'])
-        container.pack(fill=tk.X, pady=(0, 8))
-        
-        # Label
-        label = tk.Label(
-            container,
-            text=f"{icon} {label_text}",
-            font=('Segoe UI', 9, 'bold'),
-            bg=self.colors['card'],
-            fg=self.colors['text']
-        )
-        label.pack(anchor=tk.W, pady=(0, 3))
-        
-        # Input ve buton frame
-        input_frame = tk.Frame(container, bg=self.colors['card'])
-        input_frame.pack(fill=tk.X)
-        
-        # Entry
-        entry = ttk.Entry(
-            input_frame,
-            textvariable=text_var,
-            font=('Segoe UI', 10),
-            style='Modern.TEntry'
-        )
-        entry.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(0, 8))
-        
-        # Gözat butonu
-        browse_btn = ttk.Button(
-            input_frame,
-            text="Gözat",
-            command=browse_command,
-            style='Secondary.TButton'
-        )
-        browse_btn.pack(side=tk.RIGHT)
         
     def create_options_card(self, parent):
-        """Seçenekler kartı"""
+        """Seçenekler kartı - Uniform font"""
         card_frame = tk.Frame(parent, bg=self.colors['card'], relief='solid', bd=1)
-        card_frame.pack(fill=tk.X, pady=3)
+        card_frame.pack(fill=tk.X, pady=2)
         
-        # Kart başlığı
+        # Kart başlığı - uniform font
         header = tk.Label(
             card_frame,
             text="⚙️ Seçenekler",
-            font=('Segoe UI', 10, 'bold'),
+            font=('Segoe UI', 8, 'bold'),  # Uniform font
             bg=self.colors['card'],
             fg=self.colors['text'],
-            pady=6
+            pady=4
         )
-        header.pack(anchor=tk.W, padx=15)
+        header.pack(anchor=tk.W, padx=12)
         
         # Seçenekler içeriği
         content_frame = tk.Frame(card_frame, bg=self.colors['card'])
-        content_frame.pack(fill=tk.X, padx=10, pady=(0, 8))
+        content_frame.pack(fill=tk.X, padx=8, pady=(0, 6))
         
-        # Büyük/küçük harf seçeneği
+        # Büyük/küçük harf seçeneği - uniform font
         case_check = ttk.Checkbutton(
             content_frame,
-            text="Büyük/Küçük Harf Duyarlı Karşılaştırma",
+            text="Büyük/Küçük Harf Duyarlı",
             variable=self.app_logic.case_sensitive,
-            style='Modern.TCheckbutton'
+            style='Small.TCheckbutton'
         )
-        case_check.pack(anchor=tk.W, pady=3)
+        case_check.pack(anchor=tk.W, pady=2)
         
-        # Kaydetme formatı
+        # Kaydetme formatı - uniform font
         tk.Label(
             content_frame,
             text="💾 Kaydetme Formatı:",
-            font=('Segoe UI', 9, 'bold'),
+            font=('Segoe UI', 8, 'bold'),  # Uniform font
             bg=self.colors['card'],
             fg=self.colors['text']
-        ).pack(anchor=tk.W, pady=(10, 3))
+        ).pack(anchor=tk.W, pady=(6, 2))
         
-        # Format seçenekleri - Checkbox'lar
+        # Format seçenekleri - uniform font
         format_frame = tk.Frame(content_frame, bg=self.colors['card'])
-        format_frame.pack(anchor=tk.W, padx=8)
+        format_frame.pack(anchor=tk.W, padx=6)
         
         # Excel checkbox
         self.save_excel = tk.BooleanVar(value=True)
@@ -566,7 +537,7 @@ class ModernExcelComparisonUI:
             format_frame,
             text="Excel (.xlsx)",
             variable=self.save_excel,
-            style='Modern.TCheckbutton'
+            style='Small.TCheckbutton'
         ).pack(anchor=tk.W, pady=1)
         
         # Resim checkbox
@@ -575,13 +546,13 @@ class ModernExcelComparisonUI:
             format_frame,
             text="Resim (.png)",
             variable=self.save_image,
-            style='Modern.TCheckbutton'
+            style='Small.TCheckbutton'
         ).pack(anchor=tk.W, pady=1)
         
     def create_action_buttons(self, parent):
-        """İşlem butonları"""
+        """İşlem butonları - Uniform font"""
         button_frame = tk.Frame(parent, bg=self.colors['background'])
-        button_frame.pack(fill=tk.X, pady=8)
+        button_frame.pack(fill=tk.X, pady=6)
         
         # Progress bar (başlangıçta gizli)
         self.progress = ttk.Progressbar(
@@ -590,23 +561,36 @@ class ModernExcelComparisonUI:
             length=350
         )
         
-        # Karşılaştır butonu (Ana buton)
+        # Karşılaştır butonu (Ana buton) - uniform font
         self.compare_btn = ttk.Button(
             button_frame,
             text="🔍 Karşılaştır",
             command=self.safe_compare_files,
             style='Accent.TButton'
         )
-        self.compare_btn.pack(fill=tk.X, pady=(0, 8))
+        self.compare_btn.pack(fill=tk.X, pady=(0, 6))
         
-        # Temizle butonu
+        # Araç-Plasiyer Ayarları butonu - uniform font
+        settings_btn = ttk.Button(
+            button_frame,
+            text="⚙️ Araç-Plasiyer Ayarları",
+            command=self.edit_vehicle_settings,
+            style='Small.TButton'
+        )
+        settings_btn.pack(fill=tk.X, pady=(0, 6))
+        
+        # Temizle butonu - uniform font
         clear_btn = ttk.Button(
             button_frame,
             text="🗑️ Temizle",
             command=self.app_logic.clear_results,
-            style='Secondary.TButton'
+            style='Small.TButton'
         )
         clear_btn.pack(fill=tk.X)
+    
+    def edit_vehicle_settings(self):
+        """Araç-plasiyer ayarları düzenleme"""
+        self.app_logic.edit_vehicle_drivers()
         
     def safe_compare_files(self):
         """Güvenli dosya karşılaştırma - Progress bar ile"""
@@ -644,26 +628,26 @@ class ModernExcelComparisonUI:
             pass
         
     def create_right_panel(self, parent):
-        """Sağ panel (Sonuçlar)"""
+        """Sağ panel (Sonuçlar) - Uniform font"""
         # Sonuçlar kartı
         card_frame = tk.Frame(parent, bg=self.colors['card'], relief='solid', bd=1)
-        card_frame.pack(fill=tk.BOTH, expand=True, pady=3)
+        card_frame.pack(fill=tk.BOTH, expand=True, pady=2)
         
-        # Kart başlığı
+        # Kart başlığı - uniform font
         header_frame = tk.Frame(card_frame, bg=self.colors['card'])
-        header_frame.pack(fill=tk.X, padx=15, pady=10)
+        header_frame.pack(fill=tk.X, padx=12, pady=6)
         
         tk.Label(
             header_frame,
             text="📊 Sonuçlar",
-            font=('Segoe UI', 11, 'bold'),
+            font=('Segoe UI', 8, 'bold'),  # Uniform font (10 → 8)
             bg=self.colors['card'],
             fg=self.colors['text']
         ).pack(side=tk.LEFT)
         
         # Sonuç tablosu frame
         table_frame = tk.Frame(card_frame, bg=self.colors['card'])
-        table_frame.pack(fill=tk.BOTH, expand=True, padx=15, pady=(0, 15))
+        table_frame.pack(fill=tk.BOTH, expand=True, padx=12, pady=(0, 12))
         
         # Treeview ve scrollbar
         tree_frame = tk.Frame(table_frame, bg=self.colors['card'])
@@ -680,7 +664,7 @@ class ModernExcelComparisonUI:
             columns=columns,
             show="headings",
             yscrollcommand=scrollbar.set,
-            height=15
+            height=12
         )
         
         # Başlıkları ayarla
@@ -689,26 +673,34 @@ class ModernExcelComparisonUI:
         
         # Sütun genişlikleri
         self.result_tree.column("no", width=50, anchor=tk.CENTER)
-        self.result_tree.column("unvan", width=400)
+        self.result_tree.column("unvan", width=350)
         
         self.result_tree.pack(fill=tk.BOTH, expand=True)
         scrollbar.config(command=self.result_tree.yview)
         
-        # Durum bilgisi
+        # Durum bilgisi - uniform font
         status_frame = tk.Frame(card_frame, bg=self.colors['card'])
-        status_frame.pack(fill=tk.X, padx=15, pady=(0, 10))
+        status_frame.pack(fill=tk.X, padx=12, pady=(0, 8))
         
         self.status_var = tk.StringVar(value="Henüz karşılaştırma yapılmadı.")
         status_label = tk.Label(
             status_frame,
             textvariable=self.status_var,
-            font=('Segoe UI', 9, 'italic'),
+            font=('Segoe UI', 8, 'italic'),  # Uniform font
             bg=self.colors['card'],
             fg=self.colors['text_light'],
-            wraplength=400
+            wraplength=350
         )
         status_label.pack(anchor=tk.W)
     
+    def validate_file_selection(self, file_path, file_type):
+        """Dosya seçimini doğrula"""
+        if not file_path:
+            return False, f"Lütfen {file_type} dosyasını seçin!"
+            
+        if not os.path.exists(file_path):
+            return False, f"{file_type} dosyası bulunamadı!"
+            
     def validate_file_selection(self, file_path, file_type):
         """Dosya seçimini doğrula"""
         if not file_path:
@@ -782,7 +774,7 @@ class ModernExcelComparisonUI:
                 # Yeni sonuçları ekle
                 for i, unvan in enumerate(results, 1):
                     # Çok uzun ünvanları kısalt
-                    display_unvan = unvan if len(str(unvan)) <= 60 else str(unvan)[:57] + "..."
+                    display_unvan = unvan if len(str(unvan)) <= 50 else str(unvan)[:47] + "..."
                     self.result_tree.insert("", tk.END, values=(i, display_unvan))
                     
                 # Durum metnini güncelle
