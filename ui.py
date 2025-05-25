@@ -8,6 +8,9 @@ class ModernExcelComparisonUI:
         self.root = root
         self.app_logic = app_logic
         
+        # tkinterdnd2 var mı kontrol et
+        self.has_dnd = self.check_dnd_support()
+        
         # Modern tema ayarları
         self.setup_modern_theme()
         
@@ -19,6 +22,14 @@ class ModernExcelComparisonUI:
         
         # Progress bar için değişken
         self.progress_var = tk.BooleanVar()
+    
+    def check_dnd_support(self):
+        """Drag & Drop desteğini kontrol et"""
+        try:
+            from tkinterdnd2 import DND_FILES
+            return True
+        except ImportError:
+            return False
         
     def setup_modern_theme(self):
         """Modern tema ve renkler"""
@@ -271,10 +282,15 @@ class ModernExcelComparisonUI:
         )
         label.pack(anchor=tk.W, pady=(0, 1))
         
-        # İpucu metni - uniform font
+        # İpucu metni - uniform font - Drag & Drop durumuna göre
+        if self.has_dnd:
+            hint_text = "Sürükle veya Gözat"
+        else:
+            hint_text = "Gözat ile Seç"
+            
         hint_label = tk.Label(
             container,
-            text="Sürükle veya Gözat",
+            text=hint_text,
             font=('Segoe UI', 8, 'italic'),  # Uniform font (7 → 8)
             bg=self.colors['card'],
             fg=self.colors['text_light']
@@ -303,14 +319,20 @@ class ModernExcelComparisonUI:
         )
         browse_btn.pack(side=tk.RIGHT)
         
-        # Drag & Drop fonksiyonalitesi ekle
-        self.setup_drag_drop_for_entry(entry, text_var, browse_command)
+        # Drag & Drop fonksiyonalitesi ekle (sadece destekleniyorsa)
+        if self.has_dnd:
+            self.setup_drag_drop_for_entry(entry, text_var, browse_command)
+        else:
+            # Drag & Drop yoksa double-click ile dosya seçimi
+            entry.bind('<Double-Button-1>', lambda e: browse_command())
         
         return entry
     
     def setup_drag_drop_for_entry(self, entry_widget, text_var, browse_command):
         """Entry widget'ına drag & drop fonksiyonalitesi ekle"""
-        
+        if not self.has_dnd:
+            return
+            
         def on_drop(event):
             # Dosya yollarını al
             try:

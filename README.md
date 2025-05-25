@@ -1,43 +1,73 @@
-Modern UI: Temiz ve kullanıcı dostu arayüz
-Drag & Drop: Dosyaları sürükleyip bırakarak kolay yükleme
-Araç-Plasiyer Eşleştirme: Otomatik plasiyer adı tanıma sistemi
-Çoklu Format Desteği: Excel (.xlsx, .xls) dosya formatları
-Esnek Çıktı: Sonuçları Excel veya PNG formatında kaydetme
-Büyük/Küçük Harf Seçeneği: Duyarlı veya duyarsız karşılaştırma
-Thread-Safe: Arka planda güvenli işlem yapma
-Hata Yönetimi: Kapsamlı hata kontrol ve kullanıcı bildirimleri
+# CAL - Excel Karşılaştırma Aracı
 
-# Python ile Kurulum
+Modern arayüzlü Excel dosyalarını karşılaştırma uygulaması.
 
-Repository'yi clone edin:
+## Özellikler
 
-(https://github.com/alibedirhan/CAL-excel.git)
-cd cal-excel-karsilastirma
+- 📊 İki Excel dosyasını karşılaştırma
+- 🚚 Araç-Plasiyer eşleştirme sistemi
+- 🎯 Drag & Drop desteği (isteğe bağlı)
+- 💾 Excel ve PNG formatında sonuç kaydetme
+- 🔤 Büyük/küçük harf duyarlılık seçeneği
+- 🎨 Modern kullanıcı arayüzü
 
-Gerekli paketleri kurun:
+## Kurulum
 
-bash# Otomatik kurulum scripti
-python kurulum.py
+### Gereksinimler
 
-# Manuel kurulum
+Python 3.7+ gereklidir.
+
+```bash
 pip install -r requirements.txt
+```
 
-Uygulamayı çalıştırın:
+### İsteğe Bağlı (Drag & Drop için)
 
-bashpython main.py
+```bash
+pip install tkinterdnd2
+```
 
-# Windows EXE Dosyası
+## Kullanım
 
-GitHub Actions'tan hazır EXE dosyasını indirin:
+### Ubuntu/Linux
+```bash
+python3 main.py
+```
 
-Releases sayfasına gidin
-En son "Build Windows EXE" workflow'unu seçin
-"Excel_Karsilastirma_EXE" artifact'ini indirin
-ZIP dosyasını açın ve Excel_Karsilastirma_CAL.exe dosyasını çalıştırın
+### Windows
+```bash
+python main.py
+```
 
+## Dosya Yapısı
 
-Direkt çalıştırın:
+```
+.
+├── main.py           # Ana uygulama dosyası
+├── ui.py             # Kullanıcı arayüzü
+├── config.json       # Araç-plasiyer eşleştirmeleri (otomatik oluşur)
+├── requirements.txt  # Python bağımlılıkları
+└── app.log          # Uygulama logları (otomatik oluşur)
+```
 
-Python kurulumu gerektirmez
-Tek dosya ile çalışır
-Windows 10/11 uyumlu
+## Araç-Plasiyer Eşleştirmesi
+
+İlk çalıştırmada araç-plasiyer eşleştirmesi yapmak için dialog açılır. Bu eşleştirmeler `config.json` dosyasında saklanır ve istediğiniz zaman "Araç-Plasiyer Ayarları" butonuyla düzenleyebilirsiniz.
+
+## Sorun Giderme
+
+### tkinterdnd2 Hatası
+Eğer `ModuleNotFoundError: No module named 'tkinterdnd2'` hatası alırsanız:
+
+```bash
+pip install tkinterdnd2
+```
+
+Modül yüklenemezse program normal gözat butonlarıyla çalışmaya devam eder.
+
+### Font Sorunları
+Farklı işletim sistemlerinde font boyutları değişebilir. Kod içinde font ayarları mevcuttur.
+
+## Lisans
+
+Bu proje açık kaynak kodludur.

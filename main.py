@@ -9,7 +9,7 @@ import matplotlib
 matplotlib.use('Agg')  # Backend'i GUI uygulaması için ayarla
 import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
-from tkinterdnd2 import TkinterDnD  # Drag & Drop desteği
+# tkinterdnd2 import'unu main() fonksiyonunun içine taşıdık
 from ui import ModernExcelComparisonUI
 import threading
 import logging
@@ -833,25 +833,23 @@ def main():
     """Ana program fonksiyonu - Drag & Drop desteği ile"""
     try:
         # Önce tkinterdnd2'yi dene
-        from tkinterdnd2 import TkinterDnD
-        root = TkinterDnD.Tk()
+        try:
+            from tkinterdnd2 import TkinterDnD
+            root = TkinterDnD.Tk()
+            has_dnd = True
+        except ImportError:
+            # tkinterdnd2 yoksa normal tkinter kullan
+            root = tk.Tk()
+            has_dnd = False
+            messagebox.showwarning(
+                "Bilgi", 
+                "Drag & Drop özelliği için 'tkinterdnd2' kütüphanesini yükleyin:\n\npip3 install tkinterdnd2\n\nŞimdilik normal gözat butonlarıyla devam ediliyor."
+            )
         
         # Uygulamayı başlat
         app = ExcelComparisonApp(root)
         
         # Ana döngüyü başlat
-        root.mainloop()
-        
-    except ImportError:
-        # tkinterdnd2 yoksa normal tkinter kullan
-        messagebox.showwarning(
-            "Bilgi", 
-            "Drag & Drop özelliği için 'tkinterdnd2' kütüphanesini yükleyin:\n\npip install tkinterdnd2\n\nŞimdilik normal gözat butonlarıyla devam ediliyor."
-        )
-        
-        # Normal tkinter ile çalıştır
-        root = tk.Tk()
-        app = ExcelComparisonApp(root)
         root.mainloop()
         
     except Exception as e:
