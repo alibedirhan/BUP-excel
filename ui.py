@@ -694,15 +694,7 @@ class ModernExcelComparisonUI:
         status_label.pack(anchor=tk.W)
     
     def validate_file_selection(self, file_path, file_type):
-        """Dosya seçimini doğrula"""
-        if not file_path:
-            return False, f"Lütfen {file_type} dosyasını seçin!"
-            
-        if not os.path.exists(file_path):
-            return False, f"{file_type} dosyası bulunamadı!"
-            
-    def validate_file_selection(self, file_path, file_type):
-        """Dosya seçimini doğrula"""
+        """Dosya seçimini doğrula - Tek ve tam versiyon"""
         if not file_path:
             return False, f"Lütfen {file_type} dosyasını seçin!"
             
@@ -715,6 +707,14 @@ class ModernExcelComparisonUI:
         
         if file_ext not in valid_extensions:
             return False, f"Geçersiz dosya formatı! Desteklenen formatlar: {', '.join(valid_extensions)}"
+        
+        # Dosya boyutu kontrolü ekle
+        try:
+            file_size_mb = os.path.getsize(file_path) / (1024 * 1024)
+            if file_size_mb > 100:  # 100MB limit
+                return False, f"Dosya boyutu çok büyük ({file_size_mb:.1f}MB). Maximum 100MB destekleniyor."
+        except Exception as e:
+            return False, f"Dosya boyutu kontrolü hatası: {str(e)}"
             
         return True, ""
         
