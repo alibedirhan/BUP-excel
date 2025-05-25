@@ -11,7 +11,7 @@ Hata Yönetimi: Kapsamlı hata kontrol ve kullanıcı bildirimleri
 
 Repository'yi clone edin:
 
-bashgit clone https://github.com/kullaniciadi/cal-excel-karsilastirma.git
+[bashgit clone https://github.com/kullaniciadi/cal-excel-karsilastirma.git](https://github.com/alibedirhan/CAL-excel.git)
 cd cal-excel-karsilastirma
 
 Gerekli paketleri kurun:
