@@ -18,7 +18,7 @@ Excel dosyalarında cari ünvan karşılaştırması yapan modern, kullanıcı d
 ### 🚗 Araç-Plasiyer Sistemi
 - **Otomatik Araç Tespiti**: Depo kartından araç numarası çıkarır
 - **Plasiyer Eşleştirme**: Araç numaralarını plasiyer adlarıyla eşleştirir
-- **Akıllı Dosya Adlandırma**: "Araç 01 Ahmet ALTILI" formatında dosya adları
+- **Akıllı Dosya Adlandırma**: "Araç 01 Ahmet YILMAZ" formatında dosya adları
 - **JSON Konfigürasyon**: Esnek ve düzenlenebilir ayar sistemi
 
 ### 💾 Çıktı Formatları
@@ -81,11 +81,11 @@ pip install tkinterdnd2>=0.3.0
 ```json
 {
     "vehicle_drivers": {
-        "01": "Ahmet ALTILI",
-        "02": "Erhan AYDOĞDU",
-        "04": "Soner TANAY",
-        "05": "Süleyman TANAY",
-        "06": "Hakan YILMAZ"
+        "01": "Adem SOYTEKİN",
+        "02": "Zeki AYDOĞDU",
+        "04": "Kadir SEYHAN",
+        "05": "Mert DEMİR",
+        "06": "Hamza UÇAN"
     }
 }
 ```
