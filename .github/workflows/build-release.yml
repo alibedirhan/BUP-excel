@@ -1,26 +1,32 @@
-name: Auto Build and Release
+name: Auto Release
+
 on:
   push:
     tags:
-      - 'v*'  # v1.0.0 gibi taglerde tetiklenir
+      - 'v*'  # v1.0.0, v2.1.0 gibi taglerde çalışır
+
 jobs:
   build:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
+      
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
-      - name: Install dependencies
-        run: |
-          pip install pyinstaller
-          pip install -r requirements.txt
+
+      - name: Install PyInstaller
+        run: pip install pyinstaller
+
       - name: Build EXE
-        run: pyinstaller --onefile --windowed --name CAL-excel main.py
-      - name: Upload Release
+        run: pyinstaller --onefile --windowed --name MyApp main.py
+
+      - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
-          files: dist/CAL-excel.exe
+          files: dist/MyApp.exe
+          tag_name: ${{ github.ref_name }}  # Tag bilgisini otomatik alır
+          name: "Release ${{ github.ref_name }}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
