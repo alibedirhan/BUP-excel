@@ -1,0 +1,13 @@
+# Excel Karşılaştırma Uygulaması - Gerekli Paketler
+# Python 3.7+ gereklidir
+# Pandas 2.x uyumluluğu için güncellenmiştir
+
+# Ana bağımlılıklar
+pandas>=2.0.0
+openpyxl>=3.0.9
+xlrd>=2.0.1
+matplotlib>=3.5.0
+
+# Opsiyonel - Drag & Drop desteği için
+# tkinterdnd2 kurulumu başarısız olursa normal gözat butonları kullanılır
+tkinterdnd2>=0.3.0
