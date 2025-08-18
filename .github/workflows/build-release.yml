@@ -43,7 +43,7 @@ jobs:
         powershell Compress-Archive -Path CAL-Excel-Portable -DestinationPath CAL-Excel-Windows-v${{ github.ref_name }}.zip
         
     - name: Upload build artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4  # GÜNCELLENDİ: v3 -> v4
       with:
         name: CAL-Excel-Windows
         path: |
@@ -90,7 +90,7 @@ jobs:
         tar -czf CAL-Excel-Linux-${{ github.ref_name }}.tar.gz CAL-Excel-Linux/
         
     - name: Upload build artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4  # GÜNCELLENDİ: v3 -> v4
       with:
         name: CAL-Excel-Linux
         path: |
@@ -107,19 +107,19 @@ jobs:
       uses: actions/checkout@v4
       
     - name: Download Windows artifacts
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4  # GÜNCELLENDİ: v3 -> v4
       with:
         name: CAL-Excel-Windows
         path: ./artifacts/windows/
         
     - name: Download Linux artifacts
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4  # GÜNCELLENDİ: v3 -> v4
       with:
         name: CAL-Excel-Linux
         path: ./artifacts/linux/
         
     - name: Create Release
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v1  # NOT: Bu aksiyon hala geçerli
       with:
         files: |
           artifacts/windows/CAL-Excel-Windows-*.zip
