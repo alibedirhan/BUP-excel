@@ -2,8 +2,7 @@
 
 CAL-excel, kullanıcıların iki Excel dosyasını hızlı ve kolay bir şekilde karşılaştırmalarını sağlayan bir uygulamadır. Satır bazında yapılan karşılaştırmalarla farklılıklar renkli olarak gösterilir ve sonuçlar CSV veya Excel formatında dışa aktarılabilir.
 
-<<<<<<< HEAD
-![CAL-excel Ana Ekran](https://github.com/alibedirhan/CAL-excel/blob/main/Screenshots/main_screen.png)
+
 
 ## 🚀 Özellikler
 
@@ -12,7 +11,7 @@ CAL-excel, kullanıcıların iki Excel dosyasını hızlı ve kolay bir şekilde
 * **CSV ve Excel Formatında Çıktı Alma**: Karşılaştırma sonuçları, CSV veya Excel formatlarında dışa aktarılabilir.
 * **Kullanıcı Dostu Arayüz**: Tkinter kütüphanesi ile geliştirilmiş basit ve anlaşılır bir arayüz.
 
-![Karşılaştırma Sonuçları](https://github.com/alibedirhan/CAL-excel/blob/main/Screenshots/comparison_results.png)
+
 
 ## 🛠️ Gereksinimler
 
@@ -41,17 +40,6 @@ CAL-excel, kullanıcıların iki Excel dosyasını hızlı ve kolay bir şekilde
 
 Alternatif olarak, Windows kullanıcıları için hazırlanan derlenmiş sürümü [buradan](https://github.com/alibedirhan/CAL-excel/releases/latest) indirebilirsiniz.
 
-![Uygulama Arayüzü](https://github.com/alibedirhan/CAL-excel/blob/main/Screenshots/app_interface.png)
-
-## 📸 Ekran Görüntüleri
-
-* **Ana Ekran**: Uygulamanın başlangıç arayüzü.
-* **Karşılaştırma Sonuçları**: İki dosya arasındaki farkların gösterimi.
-* **Uygulama Arayüzü**: Kullanıcı etkileşimi için tasarlanmış arayüz.
-
-![Ana Ekran](https://github.com/alibedirhan/CAL-excel/blob/main/Screenshots/main_screen.png)
-![Karşılaştırma Sonuçları](https://github.com/alibedirhan/CAL-excel/blob/main/Screenshots/comparison_results.png)
-![Uygulama Arayüzü](https://github.com/alibedirhan/CAL-excel/blob/main/Screenshots/app_interface.png)
 
 ## 📄 Lisans
 
