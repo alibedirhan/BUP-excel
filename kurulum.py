@@ -30,7 +30,7 @@ def create_requirements_file():
     
     # Gerekli paketler listesi - main.py'daki importlara göre
     required_packages = [
-        "pandas>=2.0.0",  # Güncellendi: pandas 2.x için
+        "pandas>=2.0.0",  # Pandas 2.x için
         "openpyxl>=3.0.9", 
         "xlrd>=2.0.1",
         "matplotlib>=3.5.0",
@@ -55,23 +55,23 @@ def create_requirements_file():
         
         # Dosyayı yaz
         with open(req_file, "w", encoding="utf-8") as f:
-            f.write("# Excel Karşılaştırma Uygulaması - Gerekli Paketler\n")
+            f.write("# Excel Karsilastirma Uygulamasi - Gerekli Paketler\n")
             f.write("# Python 3.7+ gereklidir\n")
-            f.write("# Pandas 2.x uyumluluğu için güncellenmiştir\n\n")
+            f.write("# Pandas 2.x uyumlulugu icin guncellenmistir\n\n")
             
             # Ana paketler
-            f.write("# Ana bağımlılıklar\n")
+            f.write("# Ana bagimliliklar\n")
             for package in sorted(unique_packages.values()):
                 f.write(f"{package}\n")
             
-            f.write("\n# Opsiyonel - Drag & Drop desteği için\n")
-            f.write("# tkinterdnd2 kurulumu başarısız olursa normal gözat butonları kullanılır\n")
+            f.write("\n# Opsiyonel - Drag & Drop destegi icin\n")
+            f.write("# tkinterdnd2 kurulumu basarisiz olursa normal gozat butonlari kullanilir\n")
         
-        print(f"✓ '{req_file}' dosyası güncellendi.")
+        print(f"✓ '{req_file}' dosyasi guncellendi.")
         return True
         
     except Exception as e:
-        print(f"HATA: requirements.txt oluşturulurken hata: {e}")
+        print(f"HATA: requirements.txt olusturulurken hata: {e}")
         return False
 
 def install_package(package_name, optional=False):
@@ -82,25 +82,25 @@ def install_package(package_name, optional=False):
             [sys.executable, "-m", "pip", "install", package_name],
             capture_output=True,
             text=True,
-            timeout=300  # 5 dakika timeout
+            timeout=120  # 2 dakika timeout (300'den düşürüldü)
         )
         
         if result.returncode == 0:
-            print(f"  ✓ {package_name} başarıyla kuruldu")
+            print(f"  ✓ {package_name} basariyla kuruldu")
             return True
         else:
             if optional:
-                print(f"  ⚠ {package_name} kurulamadı (opsiyonel): {result.stderr.strip()}")
+                print(f"  ⚠ {package_name} kurulamadi (opsiyonel): {result.stderr.strip()}")
                 return True  # Opsiyonel paketler için başarılı say
             else:
-                print(f"  ✗ {package_name} kurulumu başarısız: {result.stderr.strip()}")
+                print(f"  ✗ {package_name} kurulumu basarisiz: {result.stderr.strip()}")
                 return False
             
     except subprocess.TimeoutExpired:
-        print(f"  ✗ {package_name} kurulumu zaman aşımına uğradı")
+        print(f"  ✗ {package_name} kurulumu zaman asimina ugradi")
         return False if not optional else True
     except Exception as e:
-        print(f"  ✗ {package_name} kurulumu sırasında hata: {e}")
+        print(f"  ✗ {package_name} kurulumu sirasinda hata: {e}")
         return False if not optional else True
 
 def check_pandas_version():
@@ -113,15 +113,18 @@ def check_pandas_version():
         print(f"✓ Pandas versiyonu: {version}")
         
         if major_version >= 2:
-            print("  ✓ Pandas 2.x - Modern API desteği mevcut")
+            print("  ✓ Pandas 2.x - Modern API destegi mevcut")
+            return True
+        elif major_version == 1:
+            print("  ⚠ Pandas 1.x - Bazi fonksiyonlar deprecated olabilir")
+            print("  → Pandas 2.x'e guncellemek onerilir: pip install --upgrade pandas")
             return True
         else:
-            print("  ⚠ Pandas 1.x - Bazı fonksiyonlar deprecated olabilir")
-            print("  → Pandas 2.x'e güncellemek önerilir: pip install --upgrade pandas")
-            return True
+            print("  ⚠ Cok eski Pandas versiyonu, guncelleme gerekli")
+            return False
             
     except ImportError:
-        print("  ✗ Pandas henüz kurulmamış")
+        print("  ✗ Pandas henuz kurulmamiş")
         return False
     except Exception as e:
         print(f"  ⚠ Pandas versiyonu kontrol edilemedi: {e}")
@@ -129,7 +132,7 @@ def check_pandas_version():
 
 def install_requirements():
     """Gerekli paketleri kur"""
-    print("Excel Karşılaştırma Uygulaması - Paket Kurulumu")
+    print("Excel Karsilastirma Uygulamasi - Paket Kurulumu")
     print("=" * 55)
     
     # Python versiyonunu kontrol et
@@ -137,7 +140,7 @@ def install_requirements():
         return False
     
     # Platform bilgisi
-    print(f"✓ İşletim sistemi: {platform.system()} {platform.release()}")
+    print(f"✓ Isletim sistemi: {platform.system()} {platform.release()}")
     
     # requirements.txt dosyasını oluştur/güncelle
     if not create_requirements_file():
@@ -145,11 +148,11 @@ def install_requirements():
     
     try:
         # pip'i güncelle
-        print("\n📦 pip güncelleniyor...")
+        print("\n📦 pip guncelleniyor...")
         subprocess.check_call([
             sys.executable, "-m", "pip", "install", "--upgrade", "pip"
         ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        print("✓ pip güncellendi")
+        print("✓ pip guncellendi")
         
         # Ana paketleri kur - Pandas 2.x uyumlu
         print("\n📦 Ana paketler kuruluyor...")
@@ -171,52 +174,51 @@ def install_requirements():
         
         # Sonuçları değerlendir
         if failed_packages:
-            print(f"\n❌ Bazı ana paketler kurulamadı: {', '.join(failed_packages)}")
+            print(f"\n⚠ Bazi ana paketler kurulamadi: {', '.join(failed_packages)}")
             print("Manuel kurulum deneyin:")
             for package in failed_packages:
                 print(f"  pip install {package}")
             return False
         else:
-            print("\n✅ Tüm paketler başarıyla kuruldu!")
-            print("\nUygulamayı başlatmak için:")
-            print("  python main.py")
-            print("  veya")
-            print("  python3 main.py")
+            print("\n✅ Tum paketler basariyla kuruldu!")
+            print("\nUygulamayi baslatmak icin:")
+            print("  python main.py        # Windows")
+            print("  python3 main.py       # Linux/Mac")
             return True
     
     except subprocess.CalledProcessError as e:
-        print(f"\n❌ Paket kurulumu sırasında pip hatası: {e}")
-        print("Çözüm önerileri:")
-        print("1. Internet bağlantınızı kontrol edin")
-        print("2. pip'i manuel güncelleyin: python -m pip install --upgrade pip")
-        print("3. Yönetici olarak çalıştırmayı deneyin")
+        print(f"\n⚠ Paket kurulumu sirasinda pip hatasi: {e}")
+        print("Cozum onerileri:")
+        print("1. Internet baglantinizi kontrol edin")
+        print("2. pip'i manuel guncelleyin: python -m pip install --upgrade pip")
+        print("3. Yonetici olarak calistirmayi deneyin")
         print("4. Ubuntu'da: sudo apt update && sudo apt install python3-pip")
         return False
     except KeyboardInterrupt:
-        print("\n⚠ Kurulum kullanıcı tarafından iptal edildi")
+        print("\n⚠ Kurulum kullanici tarafindan iptal edildi")
         return False
     except Exception as e:
-        print(f"\n❌ Beklenmeyen hata: {e}")
-        print("Çözüm için:")
+        print(f"\n⚠ Beklenmeyen hata: {e}")
+        print("Cozum icin:")
         print("1. Python kurulumunuzu kontrol edin")
-        print("2. Paketleri manuel kurmayı deneyin")
+        print("2. Paketleri manuel kurmaya deneyin")
         print("3. Ubuntu'da: sudo apt install python3-tk python3-pip")
         return False
 
 def verify_installation():
     """Kurulumu doğrula"""
-    print("\n🔍 Kurulum doğrulanıyor...")
+    print("\n🔍 Kurulum dogrulanıyor...")
     
     required_modules = [
-        ("pandas", "Veri işleme"),
-        ("openpyxl", "Excel dosya desteği"),
-        ("xlrd", "Eski Excel formatları"),
-        ("matplotlib", "Grafik oluşturma"),
-        ("tkinter", "Kullanıcı arayüzü")
+        ("pandas", "Veri isleme"),
+        ("openpyxl", "Excel dosya destegi"),
+        ("xlrd", "Eski Excel formatlari"),
+        ("matplotlib", "Grafik olusturma"),
+        ("tkinter", "Kullanici arayuzu")
     ]
     
     optional_modules = [
-        ("tkinterdnd2", "Drag & Drop desteği")
+        ("tkinterdnd2", "Drag & Drop destegi")
     ]
     
     missing_modules = []
@@ -237,7 +239,7 @@ def verify_installation():
                 __import__(module)
                 print(f"  ✓ {module} - {description}")
         except ImportError:
-            print(f"  ✗ {module} - {description} (EKSİK)")
+            print(f"  ✗ {module} - {description} (EKSIK)")
             missing_modules.append(module)
         except Exception as e:
             print(f"  ⚠ {module} - {description} (versiyon kontrol edilemedi)")
@@ -251,15 +253,15 @@ def verify_installation():
             print(f"  ⚠ {module} - {description} (opsiyonel - eksik)")
     
     if missing_modules:
-        print(f"\n❌ Eksik modüller: {', '.join(missing_modules)}")
+        print(f"\n⚠ Eksik moduller: {', '.join(missing_modules)}")
         print("\nManuel kurulum:")
         if "tkinter" in missing_modules:
             print("  Ubuntu/Debian: sudo apt install python3-tk")
             print("  CentOS/RHEL: sudo yum install tkinter")
-        print("  Diğer paketler: pip install " + " ".join(missing_modules))
+        print("  Diger paketler: pip install " + " ".join(missing_modules))
         return False
     else:
-        print("\n✅ Tüm gerekli modüller mevcut!")
+        print("\n✅ Tum gerekli moduller mevcut!")
         return True
 
 def show_system_info():
@@ -267,7 +269,7 @@ def show_system_info():
     print("\n📋 Sistem Bilgileri:")
     print(f"  • Python: {sys.version}")
     print(f"  • Platform: {platform.platform()}")
-    print(f"  • İşlemci: {platform.processor()}")
+    print(f"  • Islemci: {platform.processor()}")
     
     # pip versiyonu
     try:
@@ -276,7 +278,7 @@ def show_system_info():
         if result.returncode == 0:
             print(f"  • pip: {result.stdout.strip()}")
     except:
-        print("  • pip: Versiyon alınamadı")
+        print("  • pip: Versiyon alinamadi")
 
 def main():
     """Ana fonksiyon"""
@@ -288,51 +290,51 @@ def main():
         if install_requirements():
             # Kurulumu doğrula
             if verify_installation():
-                print("\n🎉 Kurulum başarıyla tamamlandı!")
-                print("\n📝 Kullanım:")
+                print("\n🎉 Kurulum basariyla tamamlandi!")
+                print("\n🔥 Kullanim:")
                 print("  python main.py        # Windows")
                 print("  python3 main.py       # Linux/Mac")
-                print("\n💡 İpucu: Deprecation warning'ları göz ardı edilebilir,")
-                print("   program normal çalışır. Gelecek güncellemelerde düzeltilecektir.")
+                print("\n💡 Ipucu: Deprecation warning'lari goz ardi edilebilir,")
+                print("   program normal calisir. Gelecek guncellemelerde duzeltilecektir.")
                 
-                response = input("\nUygulamayı şimdi başlatmak ister misiniz? (y/n): ")
+                response = input("\nUygulamayi simdi baslatmak ister misiniz? (y/n): ")
                 if response.lower() in ['y', 'yes', 'evet', 'e']:
-                    print("\n🚀 Uygulama başlatılıyor...")
+                    print("\n🚀 Uygulama baslatiliyor...")
                     try:
                         subprocess.run([sys.executable, "main.py"])
                     except FileNotFoundError:
-                        print("❌ main.py dosyası bulunamadı!")
+                        print("⚠ main.py dosyasi bulunamadi!")
                     except KeyboardInterrupt:
-                        print("\n⚠ Uygulama kullanıcı tarafından sonlandırıldı")
+                        print("\n⚠ Uygulama kullanici tarafindan sonlandirildi")
                 else:
-                    print("\n✅ Kurulum tamamlandı. İyi kullanımlar!")
+                    print("\n✅ Kurulum tamamlandi. Iyi kullanimlar!")
                     
             else:
-                print("\n⚠ Kurulum tamamlandı ancak bazı modüller eksik olabilir.")
-                print("Yukarıdaki talimatları takip ederek eksik modülleri kurun.")
-                input("\nÇıkmak için Enter tuşuna basın...")
+                print("\n⚠ Kurulum tamamlandi ancak bazi moduller eksik olabilir.")
+                print("Yukaridaki talimatlari takip ederek eksik modulleri kurun.")
+                input("\nCikmak icin Enter tusuna basin...")
         else:
-            print("\n❌ Kurulum başarısız!")
-            print("\n🔧 Manuel kurulum adımları:")
+            print("\n⚠ Kurulum basarisiz!")
+            print("\n🔧 Manuel kurulum adimlari:")
             print("  1. pip install --upgrade pip")
             print("  2. pip install pandas>=2.0.0 openpyxl xlrd matplotlib")
             print("  3. pip install tkinterdnd2  # Opsiyonel")
-            print("\n🐧 Ubuntu/Debian için:")
+            print("\n🐧 Ubuntu/Debian icin:")
             print("  sudo apt update")
             print("  sudo apt install python3-pip python3-tk")
             print("  pip3 install pandas openpyxl xlrd matplotlib tkinterdnd2")
-            input("\nÇıkmak için Enter tuşuna basın...")
+            input("\nCikmak icin Enter tusuna basin...")
             sys.exit(1)
             
     except KeyboardInterrupt:
-        print("\n\n⚠ Program kullanıcı tarafından sonlandırıldı.")
+        print("\n\n⚠ Program kullanici tarafindan sonlandirildi.")
         sys.exit(0)
     except Exception as e:
-        print(f"\n❌ Kritik hata: {e}")
+        print(f"\n⚠ Kritik hata: {e}")
         print("\n🔧 Sorun giderme:")
         print("  1. Python kurulumunuzu kontrol edin")
-        print("  2. Terminal/Command Prompt'u yönetici olarak çalıştırın")
-        print("  3. Internet bağlantınızı kontrol edin")
+        print("  2. Terminal/Command Prompt'u yonetici olarak calistirin")
+        print("  3. Internet baglantinizi kontrol edin")
         sys.exit(1)
 
 if __name__ == "__main__":
