@@ -1,39 +1,58 @@
-# 📊 Excel Karşılaştırma Uygulaması (CAL-excel)
+# CAL-excel: Excel Karşılaştırma Uygulaması
 
-**Excel dosyalarınızı hızlı ve kolay bir şekilde karşılaştırın!**  
-Bu uygulama, iki Excel dosyasını satır satır karşılaştırarak farklılıkları bulmanızı sağlar.
+CAL-excel, kullanıcıların iki Excel dosyasını hızlı ve kolay bir şekilde karşılaştırmalarını sağlayan bir uygulamadır. Satır bazında yapılan karşılaştırmalarla farklılıklar renkli olarak gösterilir ve sonuçlar CSV veya Excel formatında dışa aktarılabilir.
 
----
+![CAL-excel Ana Ekran](https://github.com/alibedirhan/CAL-excel/blob/main/Screenshots/main_screen.png)
 
-## 📥 Son Sürümü İndir
-[![GitHub release (latest by date)](https://img.shields.io/github/v/release/alibedirhan/CAL-excel?label=İndir&style=for-the-badge)](https://github.com/alibedirhan/CAL-excel/releases/latest/download/Excel_Karsilastirma_CAL.exe)  
-**Windows için:** [Excel_Karsilastirma_CAL.exe](https://github.com/alibedirhan/CAL-excel/releases/latest/download/Excel_Karsilastirma_CAL.exe) (Üye olmadan indirin)
+## 🚀 Özellikler
 
----
+* **İki Excel Dosyasını Karşılaştırma**: Kullanıcılar, iki farklı Excel dosyasındaki verileri karşılaştırabilir.
+* **Satır Bazında Farklılık Gösterimi**: Farklı satırlar renkli olarak vurgulanır.
+* **CSV ve Excel Formatında Çıktı Alma**: Karşılaştırma sonuçları, CSV veya Excel formatlarında dışa aktarılabilir.
+* **Kullanıcı Dostu Arayüz**: Tkinter kütüphanesi ile geliştirilmiş basit ve anlaşılır bir arayüz.
 
-## ✨ Özellikler
-- İki Excel dosyasını karşılaştırma
-- Farklı satırları renkli gösterim
-- CSV ve Excel formatlarında çıktı alma
-- Kullanıcı dostu arayüz (Tkinter)
+![Karşılaştırma Sonuçları](https://github.com/alibedirhan/CAL-excel/blob/main/Screenshots/comparison_results.png)
 
----
+## 🛠️ Gereksinimler
 
-## 🖼️ Ekran Görüntüleri
-| Ana Arayüz | Karşılaştırma Sonucu |
-|------------|----------------------|
-| ![Ana Arayüz](https://i.imgur.com/XXXXXXX.png) | ![Sonuç Ekranı](https://i.imgur.com/YYYYYYY.png) |
+* Python 3.6 veya üzeri
+* Tkinter (Python ile birlikte gelir)
+* Pandas
+* Openpyxl
 
----
+## 📥 Kurulum
 
-## 🛠️ Kurulum
-### Windows
-1. [Son sürümü indirin](https://github.com/alibedirhan/CAL-excel/releases/latest)
-2. `Excel_Karsilastirma_CAL.exe` dosyasını çalıştırın.
+1. Bu depo klasörünü bilgisayarınıza indirin veya klonlayın:
 
-### Geliştiriciler için
-```bash
-git clone https://github.com/alibedirhan/CAL-excel.git
-cd CAL-excel
-pip install -r requirements.txt
-python main.py
+   ```bash
+   git clone https://github.com/alibedirhan/CAL-excel.git
+   ```
+2. Gerekli Python paketlerini yükleyin:
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+3. Uygulamayı başlatın:
+
+   ```bash
+   python main.py
+   ```
+
+Alternatif olarak, Windows kullanıcıları için hazırlanan derlenmiş sürümü [buradan](https://github.com/alibedirhan/CAL-excel/releases/latest) indirebilirsiniz.
+
+![Uygulama Arayüzü](https://github.com/alibedirhan/CAL-excel/blob/main/Screenshots/app_interface.png)
+
+## 📸 Ekran Görüntüleri
+
+* **Ana Ekran**: Uygulamanın başlangıç arayüzü.
+* **Karşılaştırma Sonuçları**: İki dosya arasındaki farkların gösterimi.
+* **Uygulama Arayüzü**: Kullanıcı etkileşimi için tasarlanmış arayüz.
+
+![Ana Ekran](https://github.com/alibedirhan/CAL-excel/blob/main/Screenshots/main_screen.png)
+![Karşılaştırma Sonuçları](https://github.com/alibedirhan/CAL-excel/blob/main/Screenshots/comparison_results.png)
+![Uygulama Arayüzü](https://github.com/alibedirhan/CAL-excel/blob/main/Screenshots/app_interface.png)
+
+## 📄 Lisans
+
+Bu proje MIT Lisansı altında lisanslanmıştır. Daha fazla bilgi için [LICENSE](https://github.com/alibedirhan/CAL-excel/blob/main/LICENSE) dosyasına bakabilirsiniz.
+

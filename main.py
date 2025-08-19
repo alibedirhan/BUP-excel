@@ -4,34 +4,50 @@ import pandas as pd
 import os
 import re
 import json
+import sys
 from datetime import datetime
 import matplotlib
-matplotlib.use('Agg')  # Backend'i GUI uygulaması için ayarla
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
-# tkinterdnd2 import'unu main() fonksiyonunun içine taşıdık
-from ui import ModernExcelComparisonUI
 import threading
 import logging
 
+# UI import kontrolü
+try:
+    from ui import ModernExcelComparisonUI
+except ImportError as e:
+    print("HATA: ui.py dosyası bulunamadı veya import edilemedi!")
+    print(f"Detay: {str(e)}")
+    print("Lütfen ui.py dosyasının aynı dizinde olduğundan emin olun.")
+    sys.exit(1)
+
 # Logging sistemi kurulumu
-logging.basicConfig(
-    filename='app.log',
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
-)
+try:
+    logging.basicConfig(
+        filename='app.log',
+        level=logging.INFO,
+        format='%(asctime)s - %(levelname)s - %(message)s',
+        encoding='utf-8'
+    )
+except Exception:
+    logging.basicConfig(
+        filename='app.log',
+        level=logging.INFO,
+        format='%(asctime)s - %(levelname)s - %(message)s'
+    )
 
 class VehicleDriverSetupDialog:
-    """Araç-Plasiyer Eşleştirme Dialog'u - Uniform Font"""
+    """Araç-Plasiyer Eşleştirme Dialog'u"""
     def __init__(self, parent, existing_data=None):
         self.parent = parent
         self.existing_data = existing_data or {}
         self.result = {}
         self.dialog = None
-        self.entries = {}  # entries'i __init__'de tanımla
+        self.entries = {}
         
     def show_setup_dialog(self):
-        """Araç-plasiyer eşleştirme dialog'unu göster - Uniform Font"""
+        """Araç-plasiyer eşleştirme dialog'unu göster"""
         self.dialog = tk.Toplevel(self.parent)
         self.dialog.title("Araç-Plasiyer Eşleştirmesi")
         self.dialog.geometry("500x600")
@@ -48,19 +64,19 @@ class VehicleDriverSetupDialog:
         main_frame = tk.Frame(self.dialog, padx=20, pady=20)
         main_frame.pack(fill=tk.BOTH, expand=True)
         
-        # Başlık - uniform font
+        # Başlık
         title_label = tk.Label(
             main_frame,
             text="Araç-Plasiyer Eşleştirmesi",
-            font=('Segoe UI', 8, 'bold')  # Arial 14 → Segoe UI 8
+            font=('Segoe UI', 8, 'bold')
         )
         title_label.pack(pady=(0, 10))
         
-        # Açıklama - uniform font
+        # Açıklama
         desc_label = tk.Label(
             main_frame,
             text="Lütfen her araç numarası için plasiyer adını girin.\nBoş bırakılan araçlar kullanılmayacak.",
-            font=('Segoe UI', 8),  # Arial 10 → Segoe UI 8
+            font=('Segoe UI', 8),
             justify=tk.LEFT
         )
         desc_label.pack(pady=(0, 15))
@@ -81,29 +97,26 @@ class VehicleDriverSetupDialog:
         # Entry'ler için dict
         self.entries = {}
         
-        # 20 araç için entry oluştur - uniform font
+        # 20 araç için entry oluştur
         for i in range(1, 21):
             vehicle_num = f"{i:02d}"
             
-            # Frame for each vehicle
             vehicle_frame = tk.Frame(scrollable_frame)
             vehicle_frame.pack(fill=tk.X, pady=2)
             
-            # Label - uniform font
             label = tk.Label(
                 vehicle_frame,
                 text=f"Araç {vehicle_num}:",
                 width=10,
                 anchor='w',
-                font=('Segoe UI', 8)  # Uniform font eklendi
+                font=('Segoe UI', 8)
             )
             label.pack(side=tk.LEFT)
             
-            # Entry - uniform font
             entry = tk.Entry(
                 vehicle_frame, 
                 width=30,
-                font=('Segoe UI', 8)  # Uniform font eklendi
+                font=('Segoe UI', 8)
             )
             entry.pack(side=tk.LEFT, padx=10, fill=tk.X, expand=True)
             self.entries[vehicle_num] = entry
@@ -115,42 +128,42 @@ class VehicleDriverSetupDialog:
         canvas.pack(side="left", fill="both", expand=True)
         scrollbar.pack(side="right", fill="y")
         
-        # Butonlar - uniform font
+        # Butonlar
         button_frame = tk.Frame(main_frame)
         button_frame.pack(fill=tk.X, pady=15)
         
-        # Kaydet butonu - uniform font
+        # Kaydet butonu
         save_btn = tk.Button(
             button_frame,
             text="Kaydet",
             command=self.save_config,
             bg="#4CAF50",
             fg="white",
-            font=('Segoe UI', 8, 'bold'),  # Arial 10 → Segoe UI 8
+            font=('Segoe UI', 8, 'bold'),
             padx=20
         )
         save_btn.pack(side=tk.RIGHT, padx=5)
         
-        # İptal butonu - uniform font
+        # İptal butonu
         cancel_btn = tk.Button(
             button_frame,
             text="İptal",
             command=self.cancel,
             bg="#f44336",
             fg="white",
-            font=('Segoe UI', 8),  # Arial 10 → Segoe UI 8
+            font=('Segoe UI', 8),
             padx=20
         )
         cancel_btn.pack(side=tk.RIGHT, padx=5)
         
-        # Örnek veriler yükle - uniform font
+        # Örnek veriler yükle
         load_sample_btn = tk.Button(
             button_frame,
             text="Örnek Veriler",
             command=self.load_sample_data,
             bg="#2196F3",
             fg="white",
-            font=('Segoe UI', 8),  # Arial 10 → Segoe UI 8
+            font=('Segoe UI', 8),
             padx=20
         )
         load_sample_btn.pack(side=tk.LEFT, padx=5)
@@ -176,22 +189,19 @@ class VehicleDriverSetupDialog:
     
     def save_config(self):
         """Konfigürasyonu kaydet"""
-        # Entry'lerden verileri al
         vehicle_drivers = {}
         for vehicle_num, entry in self.entries.items():
             driver_name = entry.get().strip()
-            if driver_name:  # Boş olmayan girişleri ekle
+            if driver_name:
                 vehicle_drivers[vehicle_num] = driver_name
         
         if not vehicle_drivers:
             messagebox.showwarning("Uyarı", "En az bir araç-plasiyer eşleştirmesi yapmalısınız!")
             return
         
-        # Config dict'i oluştur
         config = {"vehicle_drivers": vehicle_drivers}
         
         try:
-            # config.json dosyasına kaydet
             with open('config.json', 'w', encoding='utf-8') as f:
                 json.dump(config, f, indent=4, ensure_ascii=False)
             
@@ -211,31 +221,19 @@ class VehicleDriverSetupDialog:
 class ExcelComparisonLogic:
     """Excel karşılaştırma iş mantığı"""
     def __init__(self):
-        # Dosya yolları
         self.file1_path = tk.StringVar()
         self.file2_path = tk.StringVar()
         self.output_path = tk.StringVar()
-        
-        # Seçenekler
         self.case_sensitive = tk.BooleanVar(value=False)
         self.save_format = tk.StringVar(value="excel")
-        
-        # Varsayılan çıktı dosyası adı - boş başlar
         self.output_path.set("")
-        
-        # UI referansı
         self.ui = None
-        
-        # Maximum dosya boyutu (MB)
         self.max_file_size_mb = 100
-        
-        # Araç-Şoför eşleştirme tablosunu yükle
         self.vehicle_drivers = self.load_vehicle_drivers()
         
     def load_vehicle_drivers(self):
         """Araç-plasiyer eşleştirmesini dosyadan yükler"""
         try:
-            # Önce config.json dosyasını dene
             config_files = ['config.json', 'vehicle_config.json', 'drivers.json']
             
             for config_file in config_files:
@@ -247,9 +245,8 @@ class ExcelComparisonLogic:
                             logging.info(f"Araç-plasiyer konfigürasyonu yüklendi: {config_file}")
                             return vehicle_drivers
             
-            # Hiçbir config dosyası bulunamazsa çevre değişkenlerini kontrol et
             env_config = {}
-            for i in range(1, 21):  # 01-20 arası araç numaralarını kontrol et
+            for i in range(1, 21):
                 key = f"DRIVER_{i:02d}"
                 if key in os.environ:
                     env_config[f"{i:02d}"] = os.environ[key]
@@ -258,7 +255,6 @@ class ExcelComparisonLogic:
                 logging.info("Araç-plasiyer konfigürasyonu çevre değişkenlerinden yüklendi")
                 return env_config
                 
-            # Hiçbiri bulunamazsa uyarı ver ve boş dict döndür
             logging.warning("Araç-plasiyer konfigürasyonu bulunamadı!")
             return {}
             
@@ -271,22 +267,26 @@ class ExcelComparisonLogic:
     
     def show_vehicle_setup_dialog(self):
         """Araç-plasiyer eşleştirme dialog'unu göster"""
-        if not self.ui or not self.ui.root:
+        if not self.ui or not hasattr(self.ui, 'root') or not self.ui.root:
+            logging.error("UI referansı bulunamadı veya root widget yok")
             return False
             
-        dialog = VehicleDriverSetupDialog(self.ui.root, self.vehicle_drivers)
-        result = dialog.show_setup_dialog()
-        
-        if result:
-            self.vehicle_drivers = result
-            return True
-        return False
+        try:
+            dialog = VehicleDriverSetupDialog(self.ui.root, self.vehicle_drivers)
+            result = dialog.show_setup_dialog()
+            
+            if result:
+                self.vehicle_drivers = result
+                return True
+            return False
+        except Exception as e:
+            logging.error(f"Vehicle setup dialog hatası: {str(e)}")
+            return False
     
     def set_ui(self, ui):
         """UI referansını ayarla"""
         self.ui = ui
         
-        # Eğer config yüklenemişse kullanıcıdan eşleştirme isteyin
         if not self.vehicle_drivers and ui:
             response = messagebox.askyesno(
                 "Araç-Plasiyer Eşleştirmesi",
@@ -297,13 +297,11 @@ class ExcelComparisonLogic:
             )
             
             if response:
-                # Dialog'u göster
                 if self.show_vehicle_setup_dialog():
                     logging.info("Kullanıcı araç-plasiyer eşleştirmesi yaptı")
                 else:
                     logging.info("Kullanıcı araç-plasiyer eşleştirmesini iptal etti")
             else:
-                # Varsayılan config oluştur
                 self.create_default_config()
                 self.vehicle_drivers = self.load_vehicle_drivers()
     
@@ -340,7 +338,6 @@ class ExcelComparisonLogic:
         if not self.ui:
             return
         
-        # Mevcut verileri dialog'a geç
         dialog = VehicleDriverSetupDialog(self.ui.root, self.vehicle_drivers)
         result = dialog.show_setup_dialog()
         
@@ -360,11 +357,9 @@ class ExcelComparisonLogic:
             return False, f"Dosya boyutu kontrol edilemedi: {str(e)}"
     
     def find_header_row(self, df):
-        """DataFrame içinde başlık satırını bulur - Pandas 2.x uyumlu versiyon"""
+        """DataFrame içinde başlık satırını bulur"""
         try:
-            # DataFrame'i string'e çevir ve "Cari Ünvan" içeren satırları bul
             df_str = df.astype(str)
-            # DÜZELTİLDİ: applymap yerine map kullan (pandas deprecation warning)
             mask = df_str.map(lambda x: "Cari Ünvan" in x if isinstance(x, str) else False).any(axis=1)
             
             if mask.any():
@@ -372,7 +367,6 @@ class ExcelComparisonLogic:
             return -1
         except Exception as e:
             logging.error(f"Başlık satırı bulma hatası: {str(e)}")
-            # Fallback - eski yöntem
             for i, row in df.iterrows():
                 for value in row.values:
                     if isinstance(value, str) and "Cari Ünvan" in value:
@@ -385,23 +379,33 @@ class ExcelComparisonLogic:
             if not isinstance(depo_text, str):
                 return None
                 
-            # Farklı formatları dene
+            logging.info(f"Araç numarası çıkarma denemesi: '{depo_text}'")
+                
             patterns = [
-                r'[Aa]raç\s*(\d{1,2})',           # "Araç 01", "araç 1" 
-                r'[Aa]rac\s*(\d{1,2})',           # "Arac 01" (typo)
-                r'[Vv]ehicle\s*(\d{1,2})',        # "Vehicle 01"
-                r'(\d{1,2})\s*[Nn]o',             # "01 No", "1 No"
-                r'(\d{1,2})\s*[Nn]olu',           # "01 Nolu"
-                r'\b(\d{1,2})\b'                  # Sadece rakam (en son denenir)
+                r'[İI][Zz][Mm][İi][Rr]\s+[Aa][Rr][Aa][Çç]\s+(\d{1,2})',
+                r'[İI][Zz][Mm][İi][Rr]\s+[Aa][Rr][Aa][Cc]\s+(\d{1,2})',
+                r'[Aa]raç\s*(\d{1,2})',
+                r'[Aa]rac\s*(\d{1,2})',
+                r'[Vv]ehicle\s*(\d{1,2})',
+                r'(\d{1,2})\s*[Nn]o',
+                r'(\d{1,2})\s*[Nn]olu',
+                r'\b(\d{1,2})\b'
             ]
             
-            for pattern in patterns:
+            for i, pattern in enumerate(patterns):
                 match = re.search(pattern, depo_text)
                 if match:
-                    vehicle_num = match.group(1).zfill(2)  # 2 haneli yap (01, 02, etc.)
+                    vehicle_num = match.group(1).zfill(2)
+                    logging.info(f"Pattern {i+1} ile eşleşti. Araç numarası: {vehicle_num}")
+                    
                     if vehicle_num in self.vehicle_drivers:
+                        driver_name = self.vehicle_drivers[vehicle_num]
+                        logging.info(f"Araç {vehicle_num} → Plasiyer: {driver_name}")
                         return vehicle_num
+                    else:
+                        logging.warning(f"Araç {vehicle_num} config'de bulunamadı")
                         
+            logging.warning(f"Hiçbir pattern eşleşmedi: '{depo_text}'")
             return None
             
         except Exception as e:
@@ -411,34 +415,25 @@ class ExcelComparisonLogic:
     def create_filename_with_driver(self, depo_text):
         """Depo kartından araç numarası çıkarıp plasiyer adıyla dosya adı oluşturur"""
         try:
-            # Araç numarasını çıkar
             vehicle_num = self.extract_vehicle_number(depo_text)
             
             if vehicle_num and vehicle_num in self.vehicle_drivers:
                 driver_name = self.vehicle_drivers[vehicle_num]
-                # "Araç 01 Ahmet ALTILI" formatında dosya adı oluştur
-                filename = f"Araç {vehicle_num} {driver_name}"
-                # Dosya adını güvenli hale getir
+                filename = f"Arac_{vehicle_num}_{driver_name}"
                 return self.sanitize_filename(filename)
             else:
-                # Araç numarası bulunamadıysa eski yöntemi kullan
                 return self.sanitize_filename(depo_text) if depo_text else ""
                 
         except Exception as e:
             logging.error(f"Plasiyerli dosya adı oluşturma hatası: {str(e)}")
-            # Hata durumunda güvenli bir ad döndür
             return self.sanitize_filename(depo_text) if depo_text else ""
     
     def sanitize_filename(self, filename):
         """Dosya adını güvenli hale getirir"""
-        # Windows'da yasak karakterleri kaldır
         invalid_chars = r'[\\/*?:"<>|]'
         safe_name = re.sub(invalid_chars, '', filename)
-        
-        # Türkçe karakterleri korur, sadece yasak olanları kaldırır
         safe_name = safe_name.strip()
         
-        # Çok uzun ise kısalt
         if len(safe_name) > 100:
             safe_name = safe_name[:100]
             
@@ -446,61 +441,75 @@ class ExcelComparisonLogic:
     
     def update_output_filename(self, file_path):
         """Seçilen dosyaya göre çıktı dosya adını günceller"""
+        logging.info(f"🔍 update_output_filename çağrıldı: {file_path}")
+        
         try:
-            # Dosya boyutunu kontrol et
             is_valid, error_msg = self.validate_file_size(file_path)
             if not is_valid:
+                logging.warning(f"🔍 Dosya boyutu hatası: {error_msg}")
                 if self.ui:
                     self.ui.show_warning("Uyarı", error_msg)
+                default_name = f"output_{datetime.now().strftime('%H%M%S')}"
+                self.output_path.set(default_name)
                 return
                 
-            # Excel dosyasını oku (sadece ilk 10 satır)
             df = pd.read_excel(file_path, header=None, nrows=10)
+            logging.info(f"🔍 Excel dosyası okundu, {len(df)} satır")
             
-            # Depo adını bul
             depo_name = None
             for i in range(min(10, len(df))):
                 row_str = str(df.iloc[i, 0]) if len(df.columns) > 0 else None
-                if isinstance(row_str, str) and "Depo Kartı" in row_str:
-                    # [xxxx] DEPO ADI formatını bul - DÜZELTİLDİ: Raw string kullan
+                logging.info(f"🔍 Satır {i}: '{row_str}'")
+                
+                if isinstance(row_str, str) and "Cari Kategori 3" in row_str:
+                    logging.info(f"🔍 CARİ KATEGORİ 3 BULUNDU: {row_str}")
                     match = re.search(r'\[(.*?)\]\s*(.*?)(?:\n|\r\n|$)', row_str)
                     if match and match.group(2):
                         depo_name = match.group(2).strip()
+                        logging.info(f"🔍 Araç adı çıkarıldı: '{depo_name}'")
                         break
+                    else:
+                        logging.warning(f"🔍 Regex eşleşmedi, ham metin: {repr(row_str)}")
             
-            # Depo adı bulunduysa çıktı dosya adını güncelle (araç-plasiyer eşleştirmeli)
+            if not depo_name:
+                logging.warning("🔍 Hiçbir satırda 'Cari Kategori 3' bulunamadı")
+            
             if depo_name:
-                # Yeni fonksiyonu kullan - araç numarasına göre plasiyer adı ekle
+                logging.info(f"🔍 create_filename_with_driver çağrılıyor: '{depo_name}'")
                 filename_with_driver = self.create_filename_with_driver(depo_name)
+                logging.info(f"🔍 Oluşturulan dosya adı: '{filename_with_driver}'")
                 self.output_path.set(filename_with_driver)
             else:
-                # Depo adı bulunamadıysa boş bırak
-                self.output_path.set("")
+                default_name = f"karsilastirma_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+                logging.info(f"🔍 Varsayılan ad kullanılıyor: '{default_name}'")
+                self.output_path.set(default_name)
                 
         except PermissionError:
+            logging.error(f"🔍 İzin hatası: {file_path}")
             if self.ui:
                 self.ui.show_error("Hata", "Dosyaya erişim izni yok!")
+            default_name = f"output_{datetime.now().strftime('%H%M%S')}"
+            self.output_path.set(default_name)
         except pd.errors.EmptyDataError:
+            logging.error(f"🔍 Boş dosya hatası: {file_path}")
             if self.ui:
                 self.ui.show_error("Hata", "Excel dosyası boş veya bozuk!")
+            default_name = f"output_{datetime.now().strftime('%H%M%S')}"
+            self.output_path.set(default_name)
         except Exception as e:
-            # Hata olursa boş bırak
-            logging.error(f"Dosya adı güncelleme hatası: {str(e)}")
+            default_name = f"karsilastirma_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+            self.output_path.set(default_name)
+            logging.error(f"🔍 Genel hata: {str(e)}")
             if self.ui:
-                self.ui.show_warning("Uyarı", f"Dosya adı güncellenemedi: {str(e)}")
+                self.ui.show_warning("Uyarı", f"Dosya adı güncellenemedi, varsayılan ad kullanılıyor: {default_name}")
     
     def save_results_as_image(self, unique_cari_unvan_list, output_path, depo_name=None):
-        """Sonuçları resim dosyası olarak kaydeder - Düzeltilmiş versiyon"""
+        """Sonuçları resim dosyası olarak kaydeder"""
         try:
-            # Matplotlib figürü oluştur
             plt.figure(figsize=(12, 8), dpi=150)
-            
-            # Türkçe karakter desteği için font ayarla
             plt.rcParams['font.family'] = 'DejaVu Sans'
             
-            # Başlık için araç-plasiyer bilgisini kullan
             if depo_name:
-                # Araç numarasını çıkar ve plasiyer adını ekle
                 vehicle_num = self.extract_vehicle_number(depo_name)
                 if vehicle_num and vehicle_num in self.vehicle_drivers:
                     driver_name = self.vehicle_drivers[vehicle_num]
@@ -511,19 +520,15 @@ class ExcelComparisonLogic:
             else:
                 plt.suptitle("Eksik Cari Ünvanlar", fontsize=16, fontweight='bold')
                 
-            # Tablo verilerini oluştur
             cell_text = []
             for i, unvan in enumerate(unique_cari_unvan_list, 1):
-                # Çok uzun ünvanları kısalt
                 display_unvan = unvan if len(str(unvan)) <= 80 else str(unvan)[:77] + "..."
                 cell_text.append([i, display_unvan])
                 
-            # Eğer liste boşsa
             if not cell_text:
                 cell_text = [["", "Tüm cari ünvanlar her iki dosyada da mevcut."]]
                 
-            # Tabloyu oluştur
-            plt.axis('off')  # Eksen çizgilerini kapat
+            plt.axis('off')
             table = plt.table(
                 cellText=cell_text,
                 colLabels=["#", "Cari Ünvan"],
@@ -532,48 +537,49 @@ class ExcelComparisonLogic:
                 colWidths=[0.1, 0.9]
             )
             
-            # Tablo stilini ayarla
             table.auto_set_font_size(False)
             table.set_fontsize(9)
-            table.scale(1, 1.5)  # Tablo yüksekliğini ayarla
+            table.scale(1, 1.5)
             
-            # Başlık satırını kalın göster
             for (i, j), cell in table.get_celld().items():
-                if i == 0:  # Başlık satırı
+                if i == 0:
                     cell.set_text_props(fontweight='bold')
                     cell.set_facecolor('#e6e6e6')
                 else:
-                    # Veri satırları için zebra efekti
                     if i % 2 == 0:
                         cell.set_facecolor('#f9f9f9')
             
-            # Dosyayı kaydet
-            plt.savefig(output_path, bbox_inches='tight', dpi=150, 
-                       facecolor='white', edgecolor='none')
-            plt.close()  # Bellek sızıntısını önle
+            full_output_path = os.path.abspath(output_path)
             
-            return True
+            output_dir = os.path.dirname(full_output_path)
+            if output_dir and not os.path.exists(output_dir):
+                os.makedirs(output_dir, exist_ok=True)
+            
+            plt.savefig(full_output_path, bbox_inches='tight', dpi=150, 
+                       facecolor='white', edgecolor='none')
+            plt.close()
+            
+            return True, full_output_path
             
         except PermissionError:
-            logging.error(f"Resim kaydetme izin hatası: {output_path}")
-            return False, "Dosya kaydetme izni yok!"
+            error_msg = f"Resim kaydetme izin hatası: {output_path}"
+            logging.error(error_msg)
+            return False, error_msg
         except Exception as e:
-            logging.error(f"Resim kaydetme hatası: {str(e)}")
-            return False, f"Resim kaydetme hatası: {str(e)}"
+            error_msg = f"Resim kaydetme hatası: {str(e)}"
+            logging.error(error_msg)
+            return False, error_msg
     
     def validate_excel_file(self, file_path):
         """Excel dosyasının geçerli olup olmadığını kontrol eder"""
         try:
-            # Dosya var mı?
             if not os.path.exists(file_path):
                 return False, "Dosya bulunamadı!"
                 
-            # Dosya boyutu kontrolü
             is_valid, error_msg = self.validate_file_size(file_path)
             if not is_valid:
                 return False, error_msg
                 
-            # Excel dosyasını okumaya çalış
             pd.read_excel(file_path, nrows=1)
             return True, ""
             
@@ -585,94 +591,83 @@ class ExcelComparisonLogic:
             return False, f"Geçersiz Excel dosyası: {str(e)}"
     
     def compare_files_thread(self):
-        """Dosya karşılaştırmayı ayrı thread'de çalıştır"""
+        """Dosya karşılaştırmasını ayrı thread'de çalıştır"""
         try:
             self.compare_files_internal()
         except Exception as e:
             logging.error(f"Thread hatası: {str(e)}")
             if self.ui:
-                self.ui.show_error("Hata", f"İşlem sırasında beklenmeyen hata: {str(e)}")
+                self.ui.root.after(0, lambda: self.ui.show_error("Hata", f"İşlem sırasında beklenmeyen hata: {str(e)}"))
     
     def compare_files(self):
         """Excel dosyalarını karşılaştırır - Ana fonksiyon"""
-        # Thread'de çalıştır
         thread = threading.Thread(target=self.compare_files_thread)
         thread.daemon = True
         thread.start()
     
     def compare_files_internal(self):
-        """Excel dosylarını karşılaştırır ve sonuçları gösterir - İç fonksiyon"""
-        # Önce girdileri kontrol et
+        """Excel dosylarını karşılaştırır ve sonuçları gösterir"""
         file1_path = self.file1_path.get()
         file2_path = self.file2_path.get()
         output_path = self.output_path.get()
         
         if not file1_path or not file2_path:
             if self.ui:
-                self.ui.show_error("Hata", "Lütfen her iki Excel dosyasını da seçin!")
+                self.ui.root.after(0, lambda: self.ui.show_error("Hata", "Lütfen her iki Excel dosyasını da seçin!"))
             return
         
-        # Dosyaları doğrula
         is_valid1, error1 = self.validate_excel_file(file1_path)
         if not is_valid1:
             if self.ui:
-                self.ui.show_error("Hata", f"Eski tarihli dosya hatası: {error1}")
+                self.ui.root.after(0, lambda: self.ui.show_error("Hata", f"Eski tarihli dosya hatası: {error1}"))
             return
             
         is_valid2, error2 = self.validate_excel_file(file2_path)
         if not is_valid2:
             if self.ui:
-                self.ui.show_error("Hata", f"Yeni tarihli dosya hatası: {error2}")
+                self.ui.root.after(0, lambda: self.ui.show_error("Hata", f"Yeni tarihli dosya hatası: {error2}"))
             return
         
-        # Sonuç listesini temizle
         self.clear_results()
         
         try:
-            # Excel dosyalarını oku (başlık satırını bilmediğimiz için tüm içeriği okuyoruz)
             logging.info(f"Dosyalar okunuyor: {file1_path}, {file2_path}")
             
             df1_full = pd.read_excel(file1_path, header=None)
             df2_full = pd.read_excel(file2_path, header=None)
             
-            # Depo Kartı bilgisini çıkar
             depo_name = None
             for i in range(min(10, len(df1_full))):
                 row_str = str(df1_full.iloc[i, 0]) if len(df1_full.columns) > 0 else None
-                if isinstance(row_str, str) and "Depo Kartı" in row_str:
-                    # [xxxx] DEPO ADI formatını bul - DÜZELTİLDİ: Raw string kullan
+                if isinstance(row_str, str) and "Cari Kategori 3" in row_str:
                     match = re.search(r'\[(.*?)\]\s*(.*?)(?:\n|\r\n|$)', row_str)
                     if match and match.group(2):
                         depo_name = match.group(2).strip()
+                        logging.info(f"🔍 Karşılaştırmada araç adı bulundu: '{depo_name}'")
                         break
             
-            # Başlık satırlarını bul
             header_row1 = self.find_header_row(df1_full)
             header_row2 = self.find_header_row(df2_full)
             
             if header_row1 == -1 or header_row2 == -1:
                 if self.ui:
-                    self.ui.show_error("Hata", "Excel dosyalarında 'Cari Ünvan' başlığı bulunamadı!")
+                    self.ui.root.after(0, lambda: self.ui.show_error("Hata", "Excel dosyalarında 'Cari Ünvan' başlığı bulunamadı!"))
                 return
             
-            # Başlık satırlarını kullanarak tekrar oku
             df1 = pd.read_excel(file1_path, header=header_row1)
             df2 = pd.read_excel(file2_path, header=header_row2)
             
-            # Sütun isimlerini temizle (baştaki ve sondaki boşlukları kaldır)
             df1.columns = [col.strip() if isinstance(col, str) else col for col in df1.columns]
             df2.columns = [col.strip() if isinstance(col, str) else col for col in df2.columns]
             
-            # İki dosyada da "Cari Ünvan" sütunu var mı kontrol et
             cari_unvan_col1 = next((col for col in df1.columns if isinstance(col, str) and "Cari Ünvan" in col), None)
             cari_unvan_col2 = next((col for col in df2.columns if isinstance(col, str) and "Cari Ünvan" in col), None)
             
             if not cari_unvan_col1 or not cari_unvan_col2:
                 if self.ui:
-                    self.ui.show_error("Hata", "Bir veya daha fazla Excel dosyasında 'Cari Ünvan' sütunu bulunamadı.")
+                    self.ui.root.after(0, lambda: self.ui.show_error("Hata", "Bir veya daha fazla Excel dosyasında 'Cari Ünvan' sütunu bulunamadı."))
                 return
             
-            # Cari ünvanları liste haline getir ve boşlukları temizle
             cari_unvan_list1 = df1[cari_unvan_col1].dropna().apply(
                 lambda x: x.strip() if isinstance(x, str) else str(x).strip()
             ).tolist()
@@ -680,134 +675,196 @@ class ExcelComparisonLogic:
                 lambda x: x.strip() if isinstance(x, str) else str(x).strip()
             ).tolist()
             
-            # Boş değerleri filtrele
             cari_unvan_list1 = [x for x in cari_unvan_list1 if x and x.strip()]
             cari_unvan_list2 = [x for x in cari_unvan_list2 if x and x.strip()]
             
-            # Büyük/küçük harf duyarlılığını devre dışı bırakma seçeneği
             if not self.case_sensitive.get():
                 cari_unvan_list1_upper = [unvan.upper() for unvan in cari_unvan_list1]
                 cari_unvan_list2_upper = [unvan.upper() for unvan in cari_unvan_list2]
                 
-                # Birinci dosyada olup ikinci dosyada olmayan cari ünvanları bul (büyük/küçük harf duyarsız)
                 unique_cari_unvan_list = [
                     cari_unvan_list1[i] for i, unvan in enumerate(cari_unvan_list1_upper) 
                     if unvan not in cari_unvan_list2_upper
                 ]
             else:
-                # Birinci dosyada olup ikinci dosyada olmayan cari ünvanları bul (büyük/küçük harf duyarlı)
                 unique_cari_unvan_list = [unvan for unvan in cari_unvan_list1 if unvan not in cari_unvan_list2]
             
-            # Duplicates'leri kaldır (sırayı koruyarak)
             seen = set()
             unique_cari_unvan_list = [x for x in unique_cari_unvan_list if not (x in seen or seen.add(x))]
             
-            # Sonuçları UI'ya gönder
             status_text = f"Toplam {len(cari_unvan_list1)} cari ünvandan {len(unique_cari_unvan_list)} tanesi yeni dosyada bulunmuyor."
             if self.ui:
                 self.ui.update_results(unique_cari_unvan_list, status_text)
             
             logging.info(f"Karşılaştırma tamamlandı. {len(unique_cari_unvan_list)} farklılık bulundu.")
             
-            # Sonuçları kaydet
             self.save_results(unique_cari_unvan_list, output_path, depo_name)
         
         except MemoryError:
             if self.ui:
-                self.ui.show_error("Hata", "Dosyalar çok büyük, bellek yetersiz!")
+                self.ui.root.after(0, lambda: self.ui.show_error("Hata", "Dosyalar çok büyük, bellek yetersiz!"))
         except pd.errors.EmptyDataError:
             if self.ui:
-                self.ui.show_error("Hata", "Excel dosyalarından biri boş veya bozuk!")
+                self.ui.root.after(0, lambda: self.ui.show_error("Hata", "Excel dosyalarından biri boş veya bozuk!"))
         except PermissionError:
             if self.ui:
-                self.ui.show_error("Hata", "Dosyalara erişim izni yok!")
+                self.ui.root.after(0, lambda: self.ui.show_error("Hata", "Dosyalara erişim izni yok!"))
         except Exception as e:
             logging.error(f"Karşılaştırma hatası: {str(e)}")
             if self.ui:
-                self.ui.show_error("Hata", f"İşlem sırasında bir hata oluştu: {str(e)}")
+                self.ui.root.after(0, lambda: self.ui.show_error("Hata", f"İşlem sırasında bir hata oluştu: {str(e)}"))
     
     def save_results(self, unique_cari_unvan_list, output_path, depo_name):
         """Sonuçları kaydet"""
-        if not output_path:
-            return
+        if not output_path or output_path.strip() == "":
+            output_path = f"karsilastirma_sonucu_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+            logging.warning(f"Output path boş, varsayılan oluşturuldu: {output_path}")
+            
+        current_dir = os.getcwd()
+        logging.info(f"Çalışma dizini: {current_dir}")
+        logging.info(f"Output path: {output_path}")
+        logging.info(f"Sonuç listesi uzunluğu: {len(unique_cari_unvan_list)}")
             
         try:
-            # UI'dan checkbox değerlerini al
             save_excel = self.ui.save_excel.get() if self.ui else True
             save_image = self.ui.save_image.get() if self.ui else False
             
+            logging.info(f"Save Excel: {save_excel}, Save Image: {save_image}")
+            
             saved_files = []
             
-            # Excel formatında kaydet
             if save_excel:
-                excel_path = output_path + ".xlsx"
+                excel_path = os.path.join(current_dir, output_path + ".xlsx")
+                logging.info(f"Excel dosyası kaydediliyor: {excel_path}")
                 
                 try:
-                    # Excel dosyasını oluştur
-                    result_df = pd.DataFrame({"Cari Ünvan": unique_cari_unvan_list})
+                    excel_dir = os.path.dirname(excel_path)
+                    if excel_dir and not os.path.exists(excel_dir):
+                        os.makedirs(excel_dir, exist_ok=True)
+                        logging.info(f"Dizin oluşturuldu: {excel_dir}")
                     
-                    # Context manager kullanarak güvenli kaydetme
-                    with pd.ExcelWriter(excel_path, engine='openpyxl') as writer:
-                        # Depo kartı bilgisini üst satıra yaz - araç ve plasiyer bilgisiyle
-                        if depo_name:
-                            # Araç numarasını çıkar ve plasiyer adını ekle
-                            vehicle_num = self.extract_vehicle_number(depo_name)
-                            if vehicle_num and vehicle_num in self.vehicle_drivers:
-                                driver_name = self.vehicle_drivers[vehicle_num]
-                                header_text = f"Araç {vehicle_num} - {driver_name}"
-                            else:
-                                header_text = depo_name
+                    table_data = []
+                    for i, unvan in enumerate(unique_cari_unvan_list, 1):
+                        table_data.append([i, unvan])
+                    
+                    result_df = pd.DataFrame(table_data, columns=["#", "Cari Ünvan"])
+                    
+                    try:
+                        from openpyxl.styles import Font, Border, Side, Alignment
+                        
+                        with pd.ExcelWriter(excel_path, engine='openpyxl') as writer:
+                            if depo_name:
+                                vehicle_num = self.extract_vehicle_number(depo_name)
+                                if vehicle_num and vehicle_num in self.vehicle_drivers:
+                                    driver_name = self.vehicle_drivers[vehicle_num]
+                                    header_text = f"Araç {vehicle_num} - {driver_name}"
+                                else:
+                                    header_text = depo_name
                                 
-                            # Yeni bir DataFrame oluştur - başlık bilgisini içeren
-                            header_df = pd.DataFrame({" ": [header_text]})
-                            header_df.to_excel(writer, sheet_name='Sheet1', index=False, header=False)
-                            
-                            # Cari ünvan listesini 2. satırdan başlatarak yaz
-                            result_df.to_excel(writer, sheet_name='Sheet1', index=False, startrow=1)
-                        else:
-                            # Depo adı yoksa normal şekilde yaz
-                            result_df.to_excel(writer, sheet_name='Sheet1', index=False)
+                                header_df = pd.DataFrame({"A": [header_text], "B": [""]})
+                                header_df.to_excel(writer, sheet_name='Sheet1', index=False, header=False, startrow=0)
+                                
+                                result_df.to_excel(writer, sheet_name='Sheet1', index=False, startrow=2)
+                                
+                                workbook = writer.book
+                                worksheet = writer.sheets['Sheet1']
+                                
+                                bold_font = Font(bold=True, color="000000", size=12)
+                                header_font = Font(bold=True, color="000000", size=10)
+                                normal_font = Font(color="000000", size=10)
+                                
+                                thin_border = Border(
+                                    left=Side(style='thin'),
+                                    right=Side(style='thin'),
+                                    top=Side(style='thin'),
+                                    bottom=Side(style='thin')
+                                )
+                                
+                                center_alignment = Alignment(horizontal='center', vertical='center')
+                                left_alignment = Alignment(horizontal='left', vertical='center')
+                                
+                                worksheet.merge_cells('A1:B1')
+                                worksheet['A1'] = header_text
+                                worksheet['A1'].font = bold_font
+                                worksheet['A1'].alignment = center_alignment
+                                worksheet['A1'].border = thin_border
+                                
+                                worksheet['A3'].font = header_font
+                                worksheet['A3'].alignment = center_alignment
+                                worksheet['A3'].border = thin_border
+                                
+                                worksheet['B3'].font = header_font
+                                worksheet['B3'].alignment = center_alignment
+                                worksheet['B3'].border = thin_border
+                                
+                                for row in range(4, len(unique_cari_unvan_list) + 4):
+                                    worksheet[f'A{row}'].font = normal_font
+                                    worksheet[f'A{row}'].alignment = center_alignment
+                                    worksheet[f'A{row}'].border = thin_border
+                                    
+                                    worksheet[f'B{row}'].font = normal_font
+                                    worksheet[f'B{row}'].alignment = left_alignment
+                                    worksheet[f'B{row}'].border = thin_border
+                                
+                                worksheet.column_dimensions['A'].width = 8
+                                worksheet.column_dimensions['B'].width = 60
+                                
+                            else:
+                                result_df.to_excel(writer, sheet_name='Sheet1', index=False)
+                    
+                    except ImportError:
+                        logging.warning("openpyxl.styles import edilemedi, basit format kullanılıyor")
+                        result_df.to_excel(excel_path, index=False)
                     
                     saved_files.append(f"Excel: {excel_path}")
-                    logging.info(f"Excel dosyası kaydedildi: {excel_path}")
+                    logging.info(f"Excel dosyası başarıyla kaydedildi: {excel_path}")
                     
-                except PermissionError:
+                except PermissionError as e:
+                    error_msg = f"Excel dosyası kaydetme izni yok: {excel_path}\nHata: {str(e)}"
+                    logging.error(error_msg)
                     if self.ui:
-                        self.ui.show_error("Hata", f"Excel dosyası kaydetme izni yok: {excel_path}")
+                        self.ui.root.after(0, lambda: self.ui.show_error("Hata", error_msg))
                 except Exception as e:
+                    error_msg = f"Excel dosyası kaydedilemedi: {str(e)}"
+                    logging.error(error_msg)
                     if self.ui:
-                        self.ui.show_error("Hata", f"Excel dosyası kaydedilemedi: {str(e)}")
+                        self.ui.root.after(0, lambda: self.ui.show_error("Hata", error_msg))
             
-            # Resim formatında kaydet
             if save_image:
-                image_path = output_path + ".png"
+                image_path = os.path.join(current_dir, output_path + ".png")
+                logging.info(f"Resim dosyası kaydediliyor: {image_path}")
                 
-                result = self.save_results_as_image(unique_cari_unvan_list, image_path, depo_name)
-                if result is True:
-                    saved_files.append(f"Resim: {image_path}")
-                    logging.info(f"Resim dosyası kaydedildi: {image_path}")
-                elif isinstance(result, tuple) and not result[0]:
-                    if self.ui:
-                        self.ui.show_error("Hata", result[1])
+                success, result_msg = self.save_results_as_image(unique_cari_unvan_list, image_path, depo_name)
+                if success:
+                    saved_files.append(f"Resim: {result_msg}")
+                    logging.info(f"Resim dosyası başarıyla kaydedildi: {result_msg}")
                 else:
+                    error_msg = f"Resim dosyası kaydedilemedi: {result_msg}"
+                    logging.error(error_msg)
                     if self.ui:
-                        self.ui.show_error("Hata", "Resim dosyası kaydedilirken bir hata oluştu.")
+                        self.ui.root.after(0, lambda: self.ui.show_error("Hata", error_msg))
             
-            # Başarı mesajı
             if saved_files:
-                message = "Sonuçlar kaydedildi:\n" + "\n".join(saved_files)
+                success_message = "Sonuçlar başarıyla kaydedildi:\n\n" + "\n".join(saved_files)
+                logging.info(success_message)
                 if self.ui:
-                    self.ui.show_info("Bilgi", message)
-            
-            # Hiçbiri seçili değilse uyarı ver
-            if not save_excel and not save_image:
+                    self.ui.root.after(0, lambda: self.ui.show_info("Başarılı", success_message))
+            elif not save_excel and not save_image:
+                warning_msg = "Lütfen en az bir kaydetme formatı seçin (Excel veya Resim)!"
+                logging.warning(warning_msg)
                 if self.ui:
-                    self.ui.show_warning("Uyarı", "Lütfen en az bir kaydetme formatı seçin!")
+                    self.ui.root.after(0, lambda: self.ui.show_warning("Uyarı", warning_msg))
+            else:
+                error_msg = "Hiçbir dosya kaydedilemedi. Lütfen log dosyasını kontrol edin."
+                logging.error(error_msg)
+                if self.ui:
+                    self.ui.root.after(0, lambda: self.ui.show_error("Hata", error_msg))
                     
         except Exception as e:
-            logging.error(f"Sonuç kaydetme hatası: {str(e)}")
+            error_msg = f"Sonuç kaydetme genel hatası: {str(e)}"
+            logging.error(error_msg)
             if self.ui:
-                self.ui.show_error("Hata", f"Sonuçlar kaydedilirken hata oluştu: {str(e)}")
+                self.ui.root.after(0, lambda: self.ui.show_error("Hata", error_msg))
     
     def clear_results(self):
         """Sonuç listesini temizler"""
@@ -816,46 +873,75 @@ class ExcelComparisonLogic:
 
 
 class ExcelComparisonApp:
-    """Ana uygulama sınıfı - Drag & Drop desteği ile"""
+    """Ana uygulama sınıfı"""
     def __init__(self, root):
         self.root = root
-        
-        # İş mantığını oluştur
         self.logic = ExcelComparisonLogic()
-        
-        # Modern UI'ı oluştur
         self.ui = ModernExcelComparisonUI(root, self.logic)
-        
-        # UI referansını logic'e ver
         self.logic.set_ui(self.ui)
 
 
 def main():
-    """Ana program fonksiyonu - Drag & Drop desteği ile"""
+    """Ana program fonksiyonu"""
     try:
-        # Önce tkinterdnd2'yi dene
+        has_dnd = False
         try:
             from tkinterdnd2 import TkinterDnD
             root = TkinterDnD.Tk()
             has_dnd = True
+            logging.info("tkinterdnd2 başarıyla yüklendi - Drag & Drop aktif")
         except ImportError:
-            # tkinterdnd2 yoksa normal tkinter kullan
             root = tk.Tk()
             has_dnd = False
+            logging.warning("tkinterdnd2 bulunamadı - Normal mod aktif")
             messagebox.showwarning(
                 "Bilgi", 
-                "Drag & Drop özelliği için 'tkinterdnd2' kütüphanesini yükleyin:\n\npip3 install tkinterdnd2\n\nŞimdilik normal gözat butonlarıyla devam ediliyor."
+                "Drag & Drop özelliği için 'tkinterdnd2' kütüphanesini yükleyin:\n\n"
+                "pip install tkinterdnd2\n\n"
+                "Şimdilik normal gözat butonlarıyla devam ediliyor."
             )
         
-        # Uygulamayı başlat
-        app = ExcelComparisonApp(root)
+        if not root:
+            raise RuntimeError("Tkinter root window oluşturulamadı")
         
-        # Ana döngüyü başlat
-        root.mainloop()
+        try:
+            app = ExcelComparisonApp(root)
+            if not app.logic or not app.ui:
+                raise RuntimeError("Uygulama bileşenleri başlatılamadı")
+        except Exception as e:
+            logging.error(f"Uygulama başlatma hatası: {str(e)}")
+            messagebox.showerror(
+                "Başlatma Hatası", 
+                f"Uygulama başlatılamadı:\n{str(e)}\n\n"
+                "Lütfen tüm dosyaların mevcut olduğundan emin olun."
+            )
+            return
+        
+        logging.info("Uygulama başarıyla başlatıldı")
+        
+        try:
+            root.mainloop()
+        except KeyboardInterrupt:
+            logging.info("Uygulama kullanıcı tarafından sonlandırıldı")
+        except Exception as e:
+            logging.error(f"Ana döngü hatası: {str(e)}")
+            messagebox.showerror("Çalışma Hatası", f"Uygulama çalışırken hata oluştu: {str(e)}")
+        finally:
+            try:
+                if root:
+                    root.quit()
+                    root.destroy()
+            except:
+                pass
         
     except Exception as e:
-        logging.critical(f"Uygulama başlatma hatası: {str(e)}")
-        messagebox.showerror("Kritik Hata", f"Uygulama başlatılırken hata oluştu: {str(e)}")
+        error_msg = f"Kritik uygulama hatası: {str(e)}"
+        logging.critical(error_msg)
+        try:
+            messagebox.showerror("Kritik Hata", error_msg)
+        except:
+            print(error_msg)
+        sys.exit(1)
 
 
 if __name__ == "__main__":
