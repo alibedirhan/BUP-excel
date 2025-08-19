@@ -97,4 +97,3 @@ Alternatif olarak, Windows kullanıcıları için hazırlanan derlenmiş sürüm
 ## 📄 Lisans
 
 Bu proje MIT Lisansı altında lisanslanmıştır. Daha fazla bilgi için [LICENSE](https://github.com/alibedirhan/CAL-excel/blob/main/LICENSE) dosyasına bakabilirsiniz.
->>>>>>> c4e1958f60c84502e4f1a3c33b59c1b5b8c81aca
