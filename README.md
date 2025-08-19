@@ -41,17 +41,6 @@ CAL-excel, kullanıcıların iki Excel dosyasını hızlı ve kolay bir şekilde
 Alternatif olarak, Windows kullanıcıları için hazırlanan derlenmiş sürümü [buradan](https://github.com/alibedirhan/CAL-excel/releases/latest) indirebilirsiniz.
 
 
-
-## 📸 Ekran Görüntüleri
-
-* **Ana Ekran**: Uygulamanın başlangıç arayüzü.
-* **Karşılaştırma Sonuçları**: İki dosya arasındaki farkların gösterimi.
-* **Uygulama Arayüzü**: Kullanıcı etkileşimi için tasarlanmış arayüz.
-
-![Ana Ekran](https://github.com/alibedirhan/CAL-excel/blob/main/Screenshots/main_screen.png)
-![Karşılaştırma Sonuçları](https://github.com/alibedirhan/CAL-excel/blob/main/Screenshots/comparison_results.png)
-![Uygulama Arayüzü](https://github.com/alibedirhan/CAL-excel/blob/main/Screenshots/app_interface.png)
-
 ## 📄 Lisans
 
 Bu proje MIT Lisansı altında lisanslanmıştır. Daha fazla bilgi için [LICENSE](https://github.com/alibedirhan/CAL-excel/blob/main/LICENSE) dosyasına bakabilirsiniz.
