@@ -12,6 +12,14 @@ CAL-excel, kullanıcıların iki Excel dosyasını hızlı ve kolay bir şekilde
 * **Kullanıcı Dostu Arayüz**: Tkinter kütüphanesi ile geliştirilmiş basit ve anlaşılır bir arayüz.
 
 
+## 📸 Ekran Görüntüleri
+
+* **Ana Ekran**: Uygulamanın başlangıç arayüzü.
+* **Karşılaştırma Sonuçları**: İki dosya arasındaki farkların gösterimi.
+* **Uygulama Arayüzü**: Kullanıcı etkileşimi için tasarlanmış arayüz.
+
+![Uygulama Arayüzü](https://github.com/alibedirhan/CAL-excel/Screenshots/bup.gif)
+
 
 ## 🛠️ Gereksinimler
 
@@ -86,13 +94,6 @@ Alternatif olarak, Windows kullanıcıları için hazırlanan derlenmiş sürüm
 
 
 
-## 📸 Ekran Görüntüleri
-
-* **Ana Ekran**: Uygulamanın başlangıç arayüzü.
-* **Karşılaştırma Sonuçları**: İki dosya arasındaki farkların gösterimi.
-* **Uygulama Arayüzü**: Kullanıcı etkileşimi için tasarlanmış arayüz.
-
-![Uygulama Arayüzü](https://github.com/alibedirhan/CAL-excel/Screenshots/bup.gif)
 
 ## 📄 Lisans
 
