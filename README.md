@@ -18,7 +18,7 @@ CAL-excel, kullanıcıların iki Excel dosyasını hızlı ve kolay bir şekilde
 * **Karşılaştırma Sonuçları**: İki dosya arasındaki farkların gösterimi.
 * **Uygulama Arayüzü**: Kullanıcı etkileşimi için tasarlanmış arayüz.
 
-![Uygulama Arayüzü](https://github.com/alibedirhan/CAL-excel/Screenshots/bup.gif)
+![Uygulama Arayüzü](Screenshots/bup.gif)
 
 
 ## 🛠️ Gereksinimler
