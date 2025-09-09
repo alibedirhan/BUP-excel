@@ -43,7 +43,7 @@ Alternatif olarak, Windows kullanıcıları için hazırlanan derlenmiş sürüm
 
 ## 📄 Lisans
 
-Bu proje MIT Lisansı altında lisanslanmıştır. Daha fazla bilgi için [LICENSE](https://github.com/alibedirhan/CAL-excel/blob/main/LICENSE) dosyasına bakabilirsiniz.
+Bu proje MIT Lisansı altında lisanslanmıştır. Daha fazla bilgi için [LICENSE](https://github.com/alibedirhan/CAL-excel/LICENSE) dosyasına bakabilirsiniz.
 
 =======
 
@@ -92,8 +92,8 @@ Alternatif olarak, Windows kullanıcıları için hazırlanan derlenmiş sürüm
 * **Karşılaştırma Sonuçları**: İki dosya arasındaki farkların gösterimi.
 * **Uygulama Arayüzü**: Kullanıcı etkileşimi için tasarlanmış arayüz.
 
-![Uygulama Arayüzü](https://github.com/alibedirhan/CAL-excel/blob/main/Screenshots/bup.gif)
+![Uygulama Arayüzü](https://github.com/alibedirhan/CAL-excel/Screenshots/bup.gif)
 
 ## 📄 Lisans
 
-Bu proje MIT Lisansı altında lisanslanmıştır. Daha fazla bilgi için [LICENSE](https://github.com/alibedirhan/CAL-excel/blob/main/LICENSE) dosyasına bakabilirsiniz.
+Bu proje MIT Lisansı altında lisanslanmıştır. Daha fazla bilgi için [LICENSE](https://github.com/alibedirhan/CAL-excel/LICENSE) dosyasına bakabilirsiniz.
